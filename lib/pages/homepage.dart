@@ -24,6 +24,7 @@ class _HomepageState extends State<Homepage> {
     });
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -177,16 +178,16 @@ class _HomepageState extends State<Homepage> {
               width: double.infinity,
               height: double.infinity,
               decoration: BoxDecoration(
-                color: Colors.blue[100]?.withOpacity(0.95), //半透明替代毛玻璃背景
+                color: Colors.blue[100]?.withValues(alpha: 0.95), //半透明替代毛玻璃背景
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: Colors.blue[200]!.withOpacity(0.95),
+                  color: Colors.blue[200]!.withValues(alpha: 0.95),
                   width: 1.5,
                 ), //边框效果
                 boxShadow: [
                   BoxShadow(
                     color:
-                        Colors.blue[200]?.withOpacity(0.8) ??
+                        Colors.blue[200]?.withValues(alpha: 0.8) ??
                         Colors.transparent,
                     blurRadius: 8,
                     offset: Offset(0, 5),
@@ -209,7 +210,7 @@ class _HomepageState extends State<Homepage> {
                   flex: 9,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.6), //低明度
+                      color: Colors.white.withValues(alpha: 0.6), //低明度
                       borderRadius: BorderRadius.circular(5),
                     ),
                   ),
@@ -228,13 +229,13 @@ class _HomepageState extends State<Homepage> {
                           margin: const EdgeInsets.only(right: 5), // 状态图标右侧间隔
                           decoration: BoxDecoration(
                             color: items[index]['running']
-                                ? Colors.green[200]?.withOpacity(0.9)
+                                ? Colors.green[200]?.withValues(alpha: 0.9)
                                 : const Color.fromARGB(
                                     255,
                                     247,
                                     115,
                                     106,
-                                  ).withOpacity(0.9),
+                                  ).withValues(alpha: 0.9),
                             borderRadius: BorderRadius.circular(11),
                           ),
                           child: Icon(
@@ -254,7 +255,7 @@ class _HomepageState extends State<Homepage> {
                             horizontal: 5,
                           ), // IP栏左右间隔
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.7), // 透明度
+                            color: Colors.white.withValues(alpha: 0.7), // 透明度
                             borderRadius: BorderRadius.circular(15),
                           ),
                           child: Center(
@@ -275,8 +276,8 @@ class _HomepageState extends State<Homepage> {
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               padding: EdgeInsets.zero,
-                              backgroundColor: Colors.red[100]?.withOpacity(
-                                0.9,
+                              backgroundColor: Colors.red[100]?.withValues(
+                                alpha: 0.9,
                               ), // 半透明浅红色背景
                               alignment: Alignment.center,
                             ),
@@ -307,7 +308,7 @@ class _HomepageState extends State<Homepage> {
                                             241,
                                             148,
                                             142,
-                                          ).withOpacity(0.9),
+                                          ).withValues(alpha: 0.9),
                                         ),
                                         child: const Text("删除"),
                                       ),

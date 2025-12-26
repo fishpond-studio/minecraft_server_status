@@ -107,7 +107,7 @@ class MinecraftServerStatus {
       (Uint8List data) {
         buffer.addAll(data);
 
-        if (buffer.length > 0) {
+        if (buffer.isNotEmpty) {
           // 解析 VarInt 长度
           int offset = 0; // 如果有多个包，这里可能需要累计
           int packetLengthLength = _VarInt.getVarIntLength(
