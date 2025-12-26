@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:is_mc_fk_running/pages/homepage.dart';
-import 'package:is_mc_fk_running/pages/picture_change.dart';
+import 'pages/homepage.dart';
+import 'pages/picture_change.dart';
 
 void main() {
   runApp(const MyApp());
