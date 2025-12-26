@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 
 DateTime now = DateTime.now();
 DateTime date = DateTime(now.month, now.day);
@@ -21,22 +22,25 @@ class _HomepageState extends State<Homepage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('Severs'),
         flexibleSpace: Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: Theme.of(context).colorScheme.inversePrimary,
-              width: 9.0,
-            ),
-          ),
           alignment: Alignment.centerRight,
-          child: Text(
-            '${date.month}/${date.day}',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+          child: Container(
+            margin: const EdgeInsets.only(right: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                IconButton(onPressed: () {}, icon: Icon(Icons.cached)),
+                SizedBox(width: 8),
+                //日期显示
+                Text(
+                  '${date.month}/${date.day}',
+                  style: TextStyle(
+                    fontSize: 24,
+                    color: const Color.fromARGB(255, 0, 0, 0),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -49,11 +53,13 @@ class _HomepageState extends State<Homepage> {
 
           return Row(
             children: [
-              Expanded(child: _buildItem(items[firstIndex], firstIndex)),
+              Expanded(
+                child: _buildItem(items[firstIndex]["name"], firstIndex),
+              ),
               const SizedBox(width: 8),
               Expanded(
                 child: secondIndex < items.length
-                    ? _buildItem(items[secondIndex], secondIndex)
+                    ? _buildItem(items[secondIndex]["name"], secondIndex)
                     : const SizedBox(),
               ),
             ],
@@ -152,69 +158,158 @@ class _HomepageState extends State<Homepage> {
   }
 
   /// 构建单个组件
-  Widget _buildItem(Map<String, dynamic> item, int index) {
+  Widget _buildItem(String name, int index) {
     return Container(
-      margin: const EdgeInsets.all(8),
-      height: 200,
-      decoration: BoxDecoration(
-        color: Colors.blue[100],
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.blue),
-      ),
+      margin: const EdgeInsets.all(12), //外层间隔
+      height: 250,
       child: Stack(
         children: [
-          // 左上角编号
-          Positioned(
-            left: 8,
-            top: 8,
-            child: CircleAvatar(
-              radius: 16,
-              backgroundColor: Colors.blue,
-              child: Text(
-                '${index + 1}',
-                style: const TextStyle(color: Colors.white, fontSize: 14),
+          // 毛玻璃效果背景
+          BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20), //模糊强度
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.blue[100]?.withOpacity(0.5), //透明度，增强毛玻璃效果
+                borderRadius: BorderRadius.circular(8),
+                // 去掉边框
               ),
             ),
           ),
-          // 中间的文字
-          Center(
+          // 卡片内容
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 10,
+            ), // 增加内边距
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  item['name'],
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                //信息显示
+                Expanded(
+                  flex: 9,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.6), //低明度
+                      borderRadius: BorderRadius.circular(5),
+                    ),
                   ),
                 ),
-                if (item['address'] != null && item['address'].isNotEmpty)
-                  Text(
-                    item['address'],
-                    style: const TextStyle(fontSize: 14, color: Colors.grey),
+                const SizedBox(height: 10), // 增加底部栏上方间隔
+                //组件底部显示状态栏
+                Expanded(
+                  flex: 1,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      //运行状态
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                          margin: const EdgeInsets.only(right: 5), // 状态图标右侧间隔
+                          decoration: BoxDecoration(
+                            color: items[index]['running']
+                                ? Colors.green[200]?.withOpacity(0.9)
+                                : const Color.fromARGB(
+                                    255,
+                                    247,
+                                    115,
+                                    106,
+                                  ).withOpacity(0.9),
+                            borderRadius: BorderRadius.circular(11),
+                          ),
+                          child: Icon(
+                            items[index]['running']
+                                ? Icons.power_settings_new
+                                : Icons.close,
+                            color: Colors.white,
+                            size: 17,
+                          ),
+                        ),
+                      ),
+                      //IP地址
+                      Expanded(
+                        flex: 4,
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 5,
+                          ), // IP栏左右间隔
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(
+                              0.7,
+                            ), // 降低透明度，与整体效果协调
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Center(
+                            child: Text(
+                              items[index]['address'],
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      //删除按钮
+                      Expanded(
+                        flex: 1,
+                        child: SizedBox.expand(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              backgroundColor: Colors.red[100]?.withOpacity(
+                                0.9,
+                              ), // 半透明浅红色背景
+                              alignment: Alignment.center,
+                            ),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: const Text("确认删除"),
+                                    content: Text(
+                                      "确定要删除服务器 ${items[index]['name']} 吗？",
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text("取消"),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            items.removeAt(index);
+                                          });
+                                          Navigator.pop(context);
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: const Color.fromARGB(
+                                            255,
+                                            241,
+                                            148,
+                                            142,
+                                          ).withOpacity(0.9),
+                                        ),
+                                        child: const Text("删除"),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                            child: const Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                              size: 15,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ElevatedButton(
-                  onPressed: () {
-                    print(item);
-                  },
-                  child: const Text('输出地址'),
                 ),
               ],
-            ),
-          ),
-          //删除按钮
-          Positioned(
-            right: 0,
-            top: 0,
-            child: IconButton(
-              icon: const Icon(Icons.close, size: 20, color: Colors.red),
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-              onPressed: () {
-                setState(() {
-                  items.removeAt(index);
-                });
-              },
             ),
           ),
         ],

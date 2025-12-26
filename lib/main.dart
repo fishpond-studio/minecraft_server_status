@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:is_mc_fk_running/pages/homepage.dart';
+import 'package:is_mc_fk_running/pages/picture_change.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       home: const Homepage(),
+      routes: {'/picture_change': (context) => const PictureChange()},
     );
   }
 }
