@@ -11,6 +11,8 @@ class _PictureChangeState extends State<PictureChange> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(centerTitle: true, title: const Text('Settings')),
+
       body: Container(
         child: Column(
           children: [

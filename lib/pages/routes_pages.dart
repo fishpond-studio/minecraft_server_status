@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'homepage.dart';
-import 'picture_change.dart';
+import 'home_page.dart';
+import 'setting_page.dart';
 
 class RoutesPages extends StatefulWidget {
   const RoutesPages({super.key});

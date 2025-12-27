@@ -39,33 +39,26 @@ class _HomepageState extends State<Homepage> {
     });
   }
 
+  /// 弹出输入框
+  Future<void> _showAddDialog() async {
+    // 弹出对话框 等待输入
+    final result = await showAddServerDialog(context);
+    if (result != null) {
+      _addItem({...result, 'running': false});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Severs'),
-        flexibleSpace: Container(
-          alignment: Alignment.centerRight,
-          child: Container(
-            margin: const EdgeInsets.only(right: 16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(onPressed: _updateDate, icon: Icon(Icons.cached)),
-                SizedBox(width: 8),
-                //日期显示
-                Text(
-                  '${date.month}/${date.day}',
-                  style: TextStyle(
-                    fontSize: 24,
-                    color: const Color.fromARGB(255, 0, 0, 0),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+        centerTitle: true,
+        title: const Text('Servers'),
+        actions: [
+          IconButton(onPressed: _updateDate, icon: const Icon(Icons.cached)),
+        ],
       ),
+
       body: Container(
         color: Colors.blue[50],
         child: GridView.builder(
@@ -85,19 +78,11 @@ class _HomepageState extends State<Homepage> {
           },
         ),
       ),
+
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddDialog,
         child: const Icon(Icons.add),
       ),
     );
-  }
-
-  /// 弹出输入框
-  Future<void> _showAddDialog() async {
-    // 弹出对话框 等待输入
-    final result = await showAddServerDialog(context);
-    if (result != null) {
-      _addItem({...result, 'running': false});
-    }
   }
 }
