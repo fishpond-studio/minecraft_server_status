@@ -22,8 +22,8 @@ class MyApp extends StatelessWidget {
       title: 'Is MC FK Running?',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 255, 255, 255),
-          primary: Colors.grey[300],
+          seedColor: const Color.fromARGB(211, 146, 221, 215),
+          primary: const Color.fromARGB(133, 215, 218, 89),
         ),
       ),
       home: const RoutesPages(),

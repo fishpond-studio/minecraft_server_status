@@ -73,19 +73,23 @@ class _HomepageState extends State<Homepage>
         centerTitle: true,
         title: const Text('Servers'),
         actions: [
-          IconButton(onPressed: _updateDate, icon: const Icon(Icons.cached)),
+          IconButton(
+            onPressed: _updateDate,
+            icon: const Icon(Icons.cached, size: 20),
+          ),
         ],
+        backgroundColor: Theme.of(context).primaryColor.withOpacity(0.15),
       ),
 
       body: Container(
-        color: Theme.of(context).primaryColor,
+        color: Theme.of(context).primaryColor.withOpacity(0.3),
         child: GridView.builder(
           padding: const EdgeInsets.all(12),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2, // 每行两列
             crossAxisSpacing: 16, // 列间距
             mainAxisSpacing: 16, // 行间距
-            childAspectRatio: 0.618, // 宽高比，根据 ServerCard 调整
+            childAspectRatio: 0.9, // 宽高比，根据 ServerCard 调整
           ),
           itemCount: db.items.length,
           itemBuilder: (context, index) {
@@ -98,9 +102,12 @@ class _HomepageState extends State<Homepage>
       ),
 
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: Theme.of(context).primaryColor,
+        elevation: 0.5,
+        focusElevation: 2,
+        hoverElevation: 2,
         onPressed: _showAddDialog,
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add, size: 20),
       ),
     );
   }
