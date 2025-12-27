@@ -65,7 +65,7 @@ class _HomepageState extends State<Homepage>
       ),
 
       body: Container(
-        color: Colors.blue[50],
+        color: Theme.of(context).primaryColor,
         child: GridView.builder(
           padding: const EdgeInsets.all(12),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -85,6 +85,7 @@ class _HomepageState extends State<Homepage>
       ),
 
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).colorScheme.primary,
         onPressed: _showAddDialog,
         child: const Icon(Icons.add),
       ),
