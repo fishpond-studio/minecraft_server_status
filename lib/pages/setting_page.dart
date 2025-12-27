@@ -18,17 +18,23 @@ class _PictureChangeState extends State<PictureChange> {
           children: [
             //更换背景图片
             Container(
-              child: Row(
-                children: [
-                  Expanded(flex: 4, child: Text('更换背景图片')),
-                  Expanded(
-                    flex: 1,
-                    child: IconButton(
-                      icon: Icon(Icons.arrow_forward_ios),
-                      onPressed: () {},
-                    ),
+              height: 50,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primaryContainer,
+              ),
+              child: SizedBox(
+                width: double.infinity,
+                child: TextButton(
+                  onPressed: () {},
+                  style: TextButton.styleFrom(alignment: Alignment.centerLeft),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: const [
+                      Text('更换背景图片'),
+                      Icon(Icons.arrow_forward_ios),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
 

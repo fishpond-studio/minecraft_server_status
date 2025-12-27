@@ -12,12 +12,15 @@ class RoutesPages extends StatefulWidget {
 class _RoutesPagesState extends State<RoutesPages> {
   int _currentIndex = 0;
 
-  final List<Widget> _pages = [const Homepage(), const PictureChange()];
+  final List<Widget> _pages = [
+    const Homepage(),
+    const PictureChange(),
+  ]; // 使用正确的Widget名称
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_currentIndex],
+      body: IndexedStack(index: _currentIndex, children: _pages),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (int index) {

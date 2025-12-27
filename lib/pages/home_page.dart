@@ -10,9 +10,13 @@ class Homepage extends StatefulWidget {
   State<Homepage> createState() => _HomepageState();
 }
 
-class _HomepageState extends State<Homepage> {
+class _HomepageState extends State<Homepage>
+    with AutomaticKeepAliveClientMixin<Homepage> {
   final List<Map<String, dynamic>> items = []; // 存储数据
   late DateTime date; // 日期变量
+
+  @override
+  bool get wantKeepAlive => true; // 保持页面状态
 
   @override
   void initState() {
@@ -50,6 +54,7 @@ class _HomepageState extends State<Homepage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // 必须调用super.build(context)
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,

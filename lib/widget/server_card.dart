@@ -75,16 +75,33 @@ class ServerCard extends StatelessWidget {
                                   WidgetStateProperty.resolveWith<Color?>((
                                     states,
                                   ) {
-                                    // 按下时
-                                    if (states.contains(WidgetState.pressed)) {
-                                      return Colors.red[400]?.withValues(
+                                    if (item['running']) {
+                                      // 按下时
+                                      if (states.contains(
+                                        WidgetState.pressed,
+                                      )) {
+                                        return Colors.green[400]?.withValues(
+                                          alpha: 0.9,
+                                        );
+                                      }
+                                      // 默认
+                                      return Colors.green[200]?.withValues(
+                                        alpha: 0.9,
+                                      );
+                                    } else {
+                                      // 按下时
+                                      if (states.contains(
+                                        WidgetState.pressed,
+                                      )) {
+                                        return Colors.red[400]?.withValues(
+                                          alpha: 0.9,
+                                        );
+                                      }
+                                      // 默认
+                                      return Colors.red[200]?.withValues(
                                         alpha: 0.9,
                                       );
                                     }
-                                    // 默认
-                                    return Colors.red[200]?.withValues(
-                                      alpha: 0.9,
-                                    );
                                   }),
                             ),
                             onPressed: () {},
@@ -160,7 +177,10 @@ class ServerCard extends StatelessWidget {
                                         child: const Text("取消"),
                                       ),
                                       ElevatedButton(
-                                        onPressed: onDelete,
+                                        onPressed: () {
+                                          Navigator.pop(context); //删除之后取消对话框
+                                          onDelete();
+                                        },
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.red[400]
                                               ?.withValues(alpha: 0.9),
