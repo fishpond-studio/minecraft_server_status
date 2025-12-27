@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:is_mc_fk_running/data/database.dart';
 
 import '../widget/server_card.dart';
 import '../widget/add_server_dialog.dart';
@@ -12,7 +14,9 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage>
     with AutomaticKeepAliveClientMixin<Homepage> {
-  final List<Map<String, dynamic>> items = []; // 存储数据
+  final _serverListBox = Hive.box('serverListBox');
+  ServerListDataBase db = ServerListDataBase(); // 引入数据
+
   late DateTime date; // 日期变量
 
   @override
@@ -20,6 +24,13 @@ class _HomepageState extends State<Homepage>
 
   @override
   void initState() {
+    if (_serverListBox.get("ITEMS") == null) {
+      // 第一次打开显示欢迎页面 引导用户输入内容
+
+      // 转到欢迎页面
+    } else {
+      db.loadData();
+    }
     super.initState();
     _updateDate(); // 初始化日期
   }
@@ -33,14 +44,16 @@ class _HomepageState extends State<Homepage>
 
   void _addItem(Map<String, dynamic> item) {
     setState(() {
-      items.add(item);
+      db.items.add(item);
     });
+    db.updateDataBase();
   }
 
   void _removeItem(int index) {
     setState(() {
-      items.removeAt(index);
+      db.items.removeAt(index);
     });
+    db.updateDataBase();
   }
 
   /// 弹出输入框
@@ -74,10 +87,10 @@ class _HomepageState extends State<Homepage>
             mainAxisSpacing: 16, // 行间距
             childAspectRatio: 0.618, // 宽高比，根据 ServerCard 调整
           ),
-          itemCount: items.length,
+          itemCount: db.items.length,
           itemBuilder: (context, index) {
             return ServerCard(
-              item: items[index],
+              item: db.items[index],
               onDelete: () => _removeItem(index),
             );
           },

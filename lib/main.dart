@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'pages/routes_pages.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // 初始化hive
+  await Hive.initFlutter();
+  // 打开一个盒子
+  await Hive.openBox('serverListBox');
+
   runApp(const MyApp());
 }
 
