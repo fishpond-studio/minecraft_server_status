@@ -8,7 +8,7 @@ Future<Map<String, String>?> showAddServerDialog(BuildContext context) {
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: const Text("添加新服务器"),
+        title: const Text("添加新服务器", style: TextStyle()),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -47,7 +47,7 @@ Future<Map<String, String>?> showAddServerDialog(BuildContext context) {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, null), // 取消
-            child: const Text("取消"),
+            child: const Text("取消", style: TextStyle()),
           ),
           ElevatedButton(
             onPressed: () {

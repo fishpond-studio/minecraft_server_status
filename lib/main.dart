@@ -21,9 +21,17 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Is MC FK Running?',
       theme: ThemeData(
+        fontFamily: 'FMinecraft',
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(211, 146, 221, 215),
-          primary: const Color.fromARGB(133, 215, 218, 89),
+          seedColor: const Color.fromARGB(210, 13, 34, 32),
+          primary: Color.fromARGB(133, 121, 155, 93),
+        ),
+        useMaterial3: true,
+        textTheme: TextTheme(
+          bodyMedium: TextStyle(
+            color: Theme.of(context).textTheme.bodyMedium?.color,
+            fontFamily: 'FMinecraft',
+          ),
         ),
       ),
       home: const RoutesPages(),

@@ -71,7 +71,12 @@ class _HomepageState extends State<Homepage>
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('Servers'),
+        title: Text(
+          'Servers',
+          style: TextStyle(
+            fontFamily: Theme.of(context).textTheme.bodyMedium?.fontFamily,
+          ),
+        ),
         actions: [
           IconButton(
             onPressed: _updateDate,

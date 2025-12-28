@@ -117,19 +117,48 @@ class ServerCard extends StatelessWidget {
                       Expanded(
                         flex: 5,
                         child: Container(
+                          //内边距
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 7,
+                            vertical: 0,
+                          ),
                           margin: const EdgeInsets.symmetric(
                             horizontal: 5,
                           ), // IP栏左右间隔
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.7), // 透明度
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(15),
+                            // 边框
+                            border: Border.all(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.primary.withOpacity(0.5),
+                              width: 1.5,
+                            ),
+                            //阴影
+                            boxShadow: [
+                              BoxShadow(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.primary.withOpacity(1),
+                                spreadRadius: 1,
+                                blurRadius: 3,
+                                offset: Offset(1, 2), // 阴影方向
+                              ),
+                            ],
                           ),
                           child: Center(
-                            child: Text(
-                              item['address'],
-                              style: const TextStyle(
-                                fontSize: 13,
-                                color: Colors.black,
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                item['address'],
+                                style: TextStyle(
+                                  fontSize: 20, // 设置一个较大的默认值，让FittedBox调整
+                                  color: Theme.of(context).colorScheme.primary
+                                      .withAlpha(200)
+                                      .withBlue(100)
+                                      .withGreen(150),
+                                ),
                               ),
                             ),
                           ),

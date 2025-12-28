@@ -130,10 +130,7 @@ class _PictureChangeState extends State<PictureChange> {
                                       color: Colors.black,
                                     ),
                                     SizedBox(width: 8),
-                                    Text(
-                                      '更换背景图片',
-                                      style: TextStyle(color: Colors.black),
-                                    ),
+                                    Text('更换背景图片', style: TextStyle()),
                                   ],
                                 ),
                                 const Icon(
@@ -147,8 +144,6 @@ class _PictureChangeState extends State<PictureChange> {
                         ),
                       ),
                     ),
-
-                    //
                   ],
                 ),
               ),
