@@ -49,7 +49,7 @@ class ThemeProvider with ChangeNotifier {
       fontFamily: 'FMinecraft',
       colorScheme: ColorScheme.fromSeed(
         seedColor: currentColor,
-        primary: currentColor.withOpacity(0.5),
+        primary: currentColor.withValues(alpha: 0.5),
       ),
       useMaterial3: true,
     );

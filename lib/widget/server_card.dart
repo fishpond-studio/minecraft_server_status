@@ -8,7 +8,7 @@ class ServerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 250,
       child: Stack(
         children: [
@@ -19,16 +19,18 @@ class ServerCard extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Theme.of(
                   context,
-                ).primaryColor.withOpacity(0.4), //半透明替代毛玻璃背景
+                ).primaryColor.withValues(alpha: 0.4), //半透明替代毛玻璃背景
                 borderRadius: BorderRadius.circular(30),
                 border: Border.all(
-                  color: Theme.of(context).primaryColor.withOpacity(0.3),
+                  color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
                   width: 1.5,
                 ),
                 //边框效果
                 boxShadow: [
                   BoxShadow(
-                    color: Theme.of(context).primaryColor.withOpacity(0.8),
+                    color: Theme.of(
+                      context,
+                    ).primaryColor.withValues(alpha: 0.8),
                     blurRadius: 8,
                     offset: Offset(2, 5),
                   ),
@@ -50,7 +52,7 @@ class ServerCard extends StatelessWidget {
                   flex: 13,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.6), //低明度
+                      color: Colors.white.withValues(alpha: 0.6), //低明度
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ),
@@ -80,25 +82,27 @@ class ServerCard extends StatelessWidget {
                                       if (states.contains(
                                         WidgetState.pressed,
                                       )) {
-                                        return Colors.green[400]?.withOpacity(
-                                          0.9,
+                                        return Colors.green[400]?.withValues(
+                                          alpha: 0.9,
                                         );
                                       }
                                       // 默认
-                                      return Colors.green[200]?.withOpacity(
-                                        0.9,
+                                      return Colors.green[200]?.withValues(
+                                        alpha: 0.9,
                                       );
                                     } else {
                                       // 按下时
                                       if (states.contains(
                                         WidgetState.pressed,
                                       )) {
-                                        return Colors.red[400]?.withOpacity(
-                                          0.9,
+                                        return Colors.red[400]?.withValues(
+                                          alpha: 0.9,
                                         );
                                       }
                                       // 默认
-                                      return Colors.red[200]?.withOpacity(0.9);
+                                      return Colors.red[200]?.withValues(
+                                        alpha: 0.9,
+                                      );
                                     }
                                   }),
                             ),
@@ -127,13 +131,13 @@ class ServerCard extends StatelessWidget {
                             vertical: 0,
                           ), // IP栏左右间隔
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.7), // 透明度
+                            color: Colors.white.withValues(alpha: 0.7), // 透明度
                             borderRadius: BorderRadius.circular(15),
                             // 边框
                             border: Border.all(
                               color: Theme.of(
                                 context,
-                              ).colorScheme.primary.withOpacity(0.5),
+                              ).colorScheme.primary.withValues(alpha: 0.5),
                               width: 1.5,
                             ),
                             //阴影
@@ -141,7 +145,7 @@ class ServerCard extends StatelessWidget {
                               BoxShadow(
                                 color: Theme.of(
                                   context,
-                                ).colorScheme.primary.withOpacity(1),
+                                ).colorScheme.primary.withValues(alpha: 1),
                                 spreadRadius: 1,
                                 blurRadius: 3,
                                 offset: Offset(1, 2), // 阴影方向
@@ -183,10 +187,14 @@ class ServerCard extends StatelessWidget {
                                   ) {
                                     // 按下时
                                     if (states.contains(WidgetState.pressed)) {
-                                      return Colors.red[400]?.withOpacity(0.9);
+                                      return Colors.red[400]?.withValues(
+                                        alpha: 0.9,
+                                      );
                                     }
                                     // 默认
-                                    return Colors.red[200]?.withOpacity(0.9);
+                                    return Colors.red[200]?.withValues(
+                                      alpha: 0.9,
+                                    );
                                   }),
                             ),
                             onPressed: () {
@@ -210,7 +218,7 @@ class ServerCard extends StatelessWidget {
                                         },
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.red[300]
-                                              ?.withOpacity(0.9),
+                                              ?.withValues(alpha: 0.9),
                                         ),
                                         child: const Text(
                                           "删除",

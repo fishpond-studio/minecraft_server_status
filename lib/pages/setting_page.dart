@@ -18,11 +18,11 @@ class _PictureChangeState extends State<PictureChange> {
         title: const Text('Settings'),
         backgroundColor: Theme.of(
           context,
-        ).colorScheme.primary.withOpacity(0.15),
+        ).colorScheme.primary.withValues(alpha: 0.15),
       ),
 
       body: Container(
-        color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
         child: Column(
           children: [
             //自定义设置部分
@@ -33,19 +33,21 @@ class _PictureChangeState extends State<PictureChange> {
               //上下内边距  左右内边距
               //padding: const EdgeInsets.symmetric(horizontal: 9),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                color: Theme.of(
+                  context,
+                ).colorScheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(25),
                 border: Border.all(
                   color: Theme.of(
                     context,
-                  ).colorScheme.primary.withOpacity(0.15),
+                  ).colorScheme.primary.withValues(alpha: 0.15),
                   width: 1,
                 ),
                 boxShadow: [
                   BoxShadow(
                     color: Theme.of(
                       context,
-                    ).colorScheme.primary.withOpacity(0.2),
+                    ).colorScheme.primary.withValues(alpha: 0.2),
                     spreadRadius: 1,
                     blurRadius: 3,
                     offset: const Offset(2, 5), // 阴影方向
@@ -62,7 +64,7 @@ class _PictureChangeState extends State<PictureChange> {
                       decoration: BoxDecoration(
                         color: Theme.of(
                           context,
-                        ).colorScheme.primary.withOpacity(0.1),
+                        ).colorScheme.primary.withValues(alpha: 0.1),
                       ),
                       child: SizedBox(
                         width: double.infinity,
@@ -117,7 +119,7 @@ class _PictureChangeState extends State<PictureChange> {
                       decoration: BoxDecoration(
                         color: Theme.of(
                           context,
-                        ).colorScheme.primary.withOpacity(0.1),
+                        ).colorScheme.primary.withValues(alpha: 0.1),
                       ),
                       child: SizedBox(
                         width: double.infinity,
@@ -176,7 +178,7 @@ class _PictureChangeState extends State<PictureChange> {
                       decoration: BoxDecoration(
                         color: Theme.of(
                           context,
-                        ).colorScheme.primary.withOpacity(0.1),
+                        ).colorScheme.primary.withValues(alpha: 0.1),
                       ),
                       child: SizedBox(
                         width: double.infinity,

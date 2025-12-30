@@ -83,11 +83,11 @@ class _HomepageState extends State<Homepage>
             icon: const Icon(Icons.cached, size: 20),
           ),
         ],
-        backgroundColor: Theme.of(context).primaryColor.withOpacity(0.15),
+        backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.15),
       ),
 
       body: Container(
-        color: Theme.of(context).primaryColor.withOpacity(0.3),
+        color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
         child: GridView.builder(
           padding: const EdgeInsets.all(12),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
