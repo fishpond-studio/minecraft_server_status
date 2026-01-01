@@ -25,7 +25,7 @@ class MinecraftParseException implements Exception {
 
 class MinecraftServerStatus {
   // 协议常量
-  static const int _requestStatus = 0x01;
+  static const int _packetID = 0x00;
   static const int _nextState = 1;
   static const int _expectedPacketId = 0;
   static const int _defaultProtocolVersion = -1;
@@ -58,7 +58,7 @@ class MinecraftServerStatus {
   List<int> _getHandshakePacket({
     int protocolVersion = _defaultProtocolVersion,
   }) => [
-    0,
+    _packetID,
     ...VarInt.encode(protocolVersion),
     ..._getHostBytes(host),
     ..._getPortBytes(port),
@@ -88,7 +88,12 @@ class MinecraftServerStatus {
       );
 
       // 发送状态请求
-      socket.add(Uint8List.fromList([_requestStatus, 0x00]));
+      socket.add(
+        Uint8List.fromList([
+          0x01, // 状态请求数据包长度
+          _packetID,
+        ]),
+      );
 
       // 接收响应（带超时控制）
       final completer = Completer<List<int>>();
