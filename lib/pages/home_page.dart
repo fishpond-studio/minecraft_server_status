@@ -17,8 +17,6 @@ class _HomepageState extends State<Homepage>
   final _serverListBox = Hive.box('serverListBox');
   ServerListDataBase db = ServerListDataBase(); // 引入数据
 
-  late DateTime date; // 日期变量
-
   @override
   bool get wantKeepAlive => true; // 保持页面状态
 
@@ -32,15 +30,9 @@ class _HomepageState extends State<Homepage>
       db.loadData();
     }
     super.initState();
-    _updateDate(); // 初始化日期
   }
 
   // 更新日期方法
-  void _updateDate() {
-    setState(() {
-      date = DateTime.now(); // 获取当前日期时间
-    });
-  }
 
   void _addItem(Map<String, dynamic> item) {
     setState(() {
@@ -78,10 +70,7 @@ class _HomepageState extends State<Homepage>
           ),
         ),
         actions: [
-          IconButton(
-            onPressed: _updateDate,
-            icon: const Icon(Icons.cached, size: 20),
-          ),
+          IconButton(onPressed: null, icon: const Icon(Icons.cached, size: 20)),
         ],
         backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.15),
       ),

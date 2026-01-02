@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'test/minecraft_server_status.dart';
+import '../services/minecraft_server_status.dart';
 
 void main() async {
   stdout.write('server host: ');

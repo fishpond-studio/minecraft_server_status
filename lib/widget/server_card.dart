@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:is_mc_fk_running/widget/server_info.dart';
 
 class ServerCard extends StatelessWidget {
   final Map<String, dynamic> item;
@@ -54,6 +55,10 @@ class ServerCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.6), //低明度
                       borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: ServerInfo(
+                      host: item['address'],
+                      port: item['port'],
                     ),
                   ),
                 ),
