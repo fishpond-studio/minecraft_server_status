@@ -52,6 +52,7 @@ class _HomepageState extends State<Homepage>
     setState(() {
       db.items[index] = item;
     });
+    db.updateDataBase();
   }
 
   /// 弹出输入框
