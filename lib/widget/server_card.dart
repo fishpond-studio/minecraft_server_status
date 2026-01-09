@@ -51,14 +51,17 @@ class ServerCard extends StatelessWidget {
                 //信息显示
                 Expanded(
                   flex: 13,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.6), //低明度
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: ServerInfo(
-                      host: item['address'],
-                      port: item['port'],
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.6), //低明度
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: ServerInfo(
+                        host: item['address'],
+                        port: item['port'],
+                      ),
                     ),
                   ),
                 ),

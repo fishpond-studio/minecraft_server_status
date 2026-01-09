@@ -40,34 +40,99 @@ class _ServerInfoState extends State<ServerInfo> {
       child: Column(
         children: [
           //图标&服务器名称
-          Container(
-            decoration: BoxDecoration(color: Colors.white),
-            child: Row(
-              children: [
-                //图标
-                Container(
-                  width: 25,
-                  decoration: BoxDecoration(color: Colors.red),
-                  child: Center(child: Icon(Icons.abc)),
-                ),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(color: Colors.white),
+              child: Row(
+                children: [
+                  //图标
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      width: 25,
+                      decoration: BoxDecoration(color: Colors.red),
+                      child: Center(child: Icon(Icons.abc)),
+                    ),
+                  ),
 
-                //服务器名称
-                Container(),
-              ],
+                  //服务器IP
+                  Expanded(
+                    flex: 5,
+                    child: FittedBox(
+                      alignment: Alignment.center,
+                      fit: BoxFit.fitWidth,
+                      child: Container(
+                        //内边距
+                        padding: EdgeInsets.symmetric(horizontal: 50),
+                        child: Text(
+                          '${widget.host}:${widget.port}',
+                          overflow: TextOverflow.visible,
+                          softWrap: false,
+                          style: TextStyle(fontSize: 200),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
 
+          //分割线
+          Divider(
+            color: Colors.grey[800],
+            thickness: 0.3,
+            height: 0.3, //消除空隙
+            indent: 16,
+            endIndent: 16,
+          ),
+
           //服务器版本
-          Container(),
+          Expanded(
+            child: FittedBox(
+              fit: BoxFit.fitWidth,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 50),
+                child: Text(
+                  info?['version'] ?? 'N/A',
+                  overflow: TextOverflow.visible,
+                  softWrap: false,
+                  style: TextStyle(fontSize: 200),
+                ),
+              ),
+            ),
+          ),
 
           //world name
-          Container(),
+          Expanded(
+            child: FittedBox(
+              fit: BoxFit.fitWidth,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 50),
+                child: Text(
+                  info?['world_name'] ?? 'N/A',
+                  overflow: TextOverflow.visible,
+                  softWrap: false,
+                  style: TextStyle(fontSize: 200),
+                ),
+              ),
+            ),
+          ),
+
+          //服务器信息更新最后时间
+          Expanded(child: Container()),
+
+          //服务器客户端类型
+          Expanded(child: Container()),
+
+          //服务器延迟
+          Expanded(child: Container()),
 
           //服务器人数(进度条)
-          Container(),
+          Expanded(child: Container()),
 
           //服务器占用(进度条)
-          Container(),
+          Expanded(child: Container()),
         ],
       ),
     );
