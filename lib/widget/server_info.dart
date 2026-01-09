@@ -73,14 +73,14 @@ class ServerInfoState extends State<ServerInfo> {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            // 1️⃣ 背景图（不透明，供模糊）
+            // 背景图（不透明，供模糊）
             if (info?["favicon"] != null)
               Image.memory(
                 base64Decode(info!["favicon"].split(',').last),
                 fit: BoxFit.cover,
               ),
 
-            // 2️⃣ 模糊层（只模糊背景）
+            // 模糊层（只模糊背景）
             BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
               child: Container(
@@ -94,11 +94,36 @@ class ServerInfoState extends State<ServerInfo> {
                   //服务器版本
                   Container(child: Text('${info?['version']?['name']}')),
 
-                  //服务器介绍
-                  Container(child: Text('${info?['description']}')),
+                  //world name
+                  Expanded(
+                    child: FittedBox(
+                      fit: BoxFit.fitWidth,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 50),
+                        child: Text(
+                          info?['world_name'] ?? 'N/A',
+                          overflow: TextOverflow.visible,
+                          softWrap: false,
+                          style: TextStyle(fontSize: 200),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  //服务器信息更新最后时间
+                  Expanded(child: Container()),
+
+                  //服务器客户端类型
+                  Expanded(child: Container()),
+
+                  //服务器延迟
+                  Expanded(child: Container()),
 
                   //服务器人数(进度条)
-                  Container(child: Text('players')),
+                  Expanded(child: Container()),
+
+                  //服务器占用(进度条)
+                  Expanded(child: Container()),
                 ],
               ),
             ),

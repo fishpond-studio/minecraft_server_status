@@ -113,65 +113,66 @@ class _PictureChangeState extends State<PictureChange> {
                       endIndent: 16,
                     ),
 
-                    //更换背景图片
-                    Container(
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.primary.withValues(alpha: 0.1),
-                      ),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: TextButton(
-                          onPressed: () {},
-                          style: TextButton.styleFrom(
-                            alignment: Alignment.centerLeft,
-                            shape: const RoundedRectangleBorder(), // 去掉圆角
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 5),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.image,
-                                      size: 20,
-                                      color: Colors.black,
-                                    ),
-                                    SizedBox(width: 8),
-                                    Text(
-                                      '更换背景图片',
-                                      style: TextStyle(
-                                        fontFamily: 'FMinecraft',
-                                        color: Theme.of(
-                                          context,
-                                        ).textTheme.bodyMedium?.color,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const Icon(
-                                  Icons.arrow_forward_ios,
-                                  size: 20,
-                                  color: Colors.black,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    //分隔线
-                    Divider(
-                      color: Colors.grey[800],
-                      thickness: 0.3,
-                      height: 0.3, //消除空隙
-                      indent: 16,
-                      endIndent: 16,
-                    ),
+                    // //先挖个坑，这个俺不会(((
+                    // //更换背景图片
+                    // Container(
+                    //   height: 50,
+                    //   decoration: BoxDecoration(
+                    //     color: Theme.of(
+                    //       context,
+                    //     ).colorScheme.primary.withValues(alpha: 0.1),
+                    //   ),
+                    //   child: SizedBox(
+                    //     width: double.infinity,
+                    //     child: TextButton(
+                    //       onPressed: () {},
+                    //       style: TextButton.styleFrom(
+                    //         alignment: Alignment.centerLeft,
+                    //         shape: const RoundedRectangleBorder(), // 去掉圆角
+                    //       ),
+                    //       child: Padding(
+                    //         padding: const EdgeInsets.symmetric(horizontal: 5),
+                    //         child: Row(
+                    //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //           children: [
+                    //             Row(
+                    //               children: [
+                    //                 Icon(
+                    //                   Icons.image,
+                    //                   size: 20,
+                    //                   color: Colors.black,
+                    //                 ),
+                    //                 SizedBox(width: 8),
+                    //                 Text(
+                    //                   '更换背景图片',
+                    //                   style: TextStyle(
+                    //                     fontFamily: 'FMinecraft',
+                    //                     color: Theme.of(
+                    //                       context,
+                    //                     ).textTheme.bodyMedium?.color,
+                    //                   ),
+                    //                 ),
+                    //               ],
+                    //             ),
+                    //             const Icon(
+                    //               Icons.arrow_forward_ios,
+                    //               size: 20,
+                    //               color: Colors.black,
+                    //             ),
+                    //           ],
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                    // //分隔线
+                    // Divider(
+                    //   color: Colors.grey[800],
+                    //   thickness: 0.3,
+                    //   height: 0.3, //消除空隙
+                    //   indent: 16,
+                    //   endIndent: 16,
+                    // ),
                     //更换主题颜色
                     Container(
                       height: 50,
