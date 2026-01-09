@@ -1,7 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
 
 class ServerListDataBase {
-  final List<Map<String, dynamic>> items = [];
+  final List<Map<String, String>> items = [];
 
   final _serverListBox = Hive.box('serverListBox');
 
@@ -10,7 +10,7 @@ class ServerListDataBase {
     items
       ..clear()
       ..addAll(
-        (data as List).map((e) => Map<String, dynamic>.from(e as Map)).toList(),
+        (data as List).map((e) => Map<String, String>.from(e as Map)).toList(),
       );
   }
 

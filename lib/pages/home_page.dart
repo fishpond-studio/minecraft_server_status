@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:is_mc_fk_running/data/database.dart';
+import 'package:is_mc_fk_running/widget/server_info_controller.dart';
 
 import '../widget/server_card.dart';
 import '../widget/add_server_dialog.dart';
@@ -17,6 +18,9 @@ class _HomepageState extends State<Homepage>
   final _serverListBox = Hive.box('serverListBox');
   ServerListDataBase db = ServerListDataBase(); // 引入数据
 
+  List<ServerInfoController> get controllers =>
+      List.generate(db.items.length, (_) => ServerInfoController());
+
   @override
   bool get wantKeepAlive => true; // 保持页面状态
 
@@ -32,9 +36,13 @@ class _HomepageState extends State<Homepage>
     super.initState();
   }
 
-  // 更新日期方法
+  void _updateServerInfo() {
+    for (final c in controllers) {
+      c.refresh?.call();
+    }
+  }
 
-  void _addItem(Map<String, dynamic> item) {
+  void _addItem(Map<String, String> item) {
     setState(() {
       db.items.add(item);
     });
@@ -48,12 +56,19 @@ class _HomepageState extends State<Homepage>
     db.updateDataBase();
   }
 
+  void _editItem(int index, Map<String, String> item) {
+    setState(() {
+      db.items[index] = item;
+    });
+    db.updateDataBase();
+  }
+
   /// 弹出输入框
   Future<void> _showAddDialog() async {
     // 弹出对话框 等待输入
     final result = await showAddServerDialog(context);
     if (result != null) {
-      _addItem({...result, 'running': false});
+      _addItem({...result});
     }
   }
 
@@ -70,7 +85,10 @@ class _HomepageState extends State<Homepage>
           ),
         ),
         actions: [
-          IconButton(onPressed: null, icon: const Icon(Icons.cached, size: 20)),
+          IconButton(
+            onPressed: _updateServerInfo,
+            icon: const Icon(Icons.cached, size: 20),
+          ),
         ],
         backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.15),
       ),
@@ -90,6 +108,8 @@ class _HomepageState extends State<Homepage>
             return ServerCard(
               item: db.items[index],
               onDelete: () => _removeItem(index),
+              onEdit: (item) => _editItem(index, item),
+              controller: controllers[index],
             );
           },
         ),

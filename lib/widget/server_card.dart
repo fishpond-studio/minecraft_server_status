@@ -1,14 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:is_mc_fk_running/widget/edit_server_dialog.dart';
 import 'package:is_mc_fk_running/widget/server_info.dart';
+import 'package:is_mc_fk_running/widget/server_info_controller.dart';
 
-class ServerCard extends StatelessWidget {
-  final Map<String, dynamic> item;
+class ServerCard extends StatefulWidget {
+  final Map<String, String> item;
   final VoidCallback onDelete;
+  final ValueChanged<Map<String, String>> onEdit;
+  final ServerInfoController controller;
 
-  const ServerCard({super.key, required this.item, required this.onDelete});
+  const ServerCard({
+    super.key,
+    required this.item,
+    required this.onDelete,
+    required this.onEdit,
+    required this.controller,
+  });
+
+  @override
+  State<ServerCard> createState() => _ServerCardState();
+}
+
+class _ServerCardState extends State<ServerCard> {
+  Future<void> _showEditDialog(
+    BuildContext context,
+    Map<String, String> item,
+  ) async {
+    // 弹出对话框 等待输入
+
+    final result = await showEditServerDialog(context, item);
+    if (result == null) return;
+    widget.onEdit(result);
+  }
 
   @override
   Widget build(BuildContext context) {
+    final name = widget.item['name'] ?? '';
+    final address = widget.item['address'] ?? '';
+    final port = widget.item['port'] ?? '';
+
     return SizedBox(
       height: 250,
       child: Stack(
@@ -51,15 +81,10 @@ class ServerCard extends StatelessWidget {
                 //信息显示
                 Expanded(
                   flex: 13,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.6), //低明度
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: ServerInfo(
-                      host: item['address'],
-                      port: item['port'],
-                    ),
+                  child: ServerInfo(
+                    host: address,
+                    port: port,
+                    controller: widget.controller,
                   ),
                 ),
                 const SizedBox(height: 9), // 底部栏上方间隔
@@ -82,40 +107,21 @@ class ServerCard extends StatelessWidget {
                                   WidgetStateProperty.resolveWith<Color?>((
                                     states,
                                   ) {
-                                    if (item['running']) {
-                                      // 按下时
-                                      if (states.contains(
-                                        WidgetState.pressed,
-                                      )) {
-                                        return Colors.green[400]?.withValues(
-                                          alpha: 0.9,
-                                        );
-                                      }
-                                      // 默认
-                                      return Colors.green[200]?.withValues(
-                                        alpha: 0.9,
-                                      );
-                                    } else {
-                                      // 按下时
-                                      if (states.contains(
-                                        WidgetState.pressed,
-                                      )) {
-                                        return Colors.red[400]?.withValues(
-                                          alpha: 0.9,
-                                        );
-                                      }
-                                      // 默认
-                                      return Colors.red[200]?.withValues(
+                                    if (states.contains(WidgetState.pressed)) {
+                                      return Colors.grey[800]?.withValues(
                                         alpha: 0.9,
                                       );
                                     }
+                                    // 默认
+                                    return Colors.grey[600]?.withValues(
+                                      alpha: 0.9,
+                                    );
                                   }),
                             ),
-                            onPressed: () {},
+                            onPressed: () =>
+                                _showEditDialog(context, widget.item),
                             child: Icon(
-                              item['running']
-                                  ? Icons.power_settings_new
-                                  : Icons.close,
+                              Icons.settings,
                               color: Colors.white,
                               size: 20,
                             ),
@@ -162,7 +168,7 @@ class ServerCard extends StatelessWidget {
                               alignment: Alignment.center,
                               fit: BoxFit.scaleDown,
                               child: Text(
-                                item['name'],
+                                name,
                                 overflow: TextOverflow.visible,
                                 softWrap: false,
                                 style: TextStyle(
@@ -192,12 +198,12 @@ class ServerCard extends StatelessWidget {
                                   ) {
                                     // 按下时
                                     if (states.contains(WidgetState.pressed)) {
-                                      return Colors.red[400]?.withValues(
+                                      return Colors.red[800]?.withValues(
                                         alpha: 0.9,
                                       );
                                     }
                                     // 默认
-                                    return Colors.red[200]?.withValues(
+                                    return Colors.red[600]?.withValues(
                                       alpha: 0.9,
                                     );
                                   }),
@@ -209,7 +215,7 @@ class ServerCard extends StatelessWidget {
                                   return AlertDialog(
                                     title: const Text("确认删除"),
                                     content: Text(
-                                      "确定要删除服务器 ${item['name']} 吗？",
+                                      "确定要删除服务器 ${widget.item['name']} 吗？",
                                     ),
                                     actions: [
                                       TextButton(
@@ -219,7 +225,7 @@ class ServerCard extends StatelessWidget {
                                       ElevatedButton(
                                         onPressed: () {
                                           Navigator.pop(context); //删除之后取消对话框
-                                          onDelete();
+                                          widget.onDelete();
                                         },
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.red[300]

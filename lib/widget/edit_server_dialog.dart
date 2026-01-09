@@ -1,40 +1,50 @@
 import 'package:flutter/material.dart';
 
-Future<Map<String, String>?> showAddServerDialog(BuildContext context) {
-  String inputName = "";
-  String inputAddress = "";
-  String inputPort = "";
+Future<Map<String, String>?> showEditServerDialog(
+  BuildContext context,
+  Map<String, String> item,
+) {
+  final initialName = item['name'] ?? '';
+  final initialAddress = item['address'] ?? '';
+  final initialPort = item['port'] ?? '';
+
+  final nameController = TextEditingController(text: initialName);
+  final addressController = TextEditingController(text: initialAddress);
+  final portController = TextEditingController(text: initialPort);
+
   return showDialog<Map<String, String>>(
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: const Text("添加新服务器", style: TextStyle()),
+        title: const Text("编辑服务器", style: TextStyle()),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               autofocus: true,
               decoration: const InputDecoration(
-                labelText: "名称(Sever)",
+                labelText: "名称",
                 border: OutlineInputBorder(),
               ),
-              onChanged: (value) => inputAddress = value,
+              controller: nameController,
             ),
             const SizedBox(height: 16),
             TextField(
+              autofocus: true,
               decoration: const InputDecoration(
                 labelText: "地址",
                 border: OutlineInputBorder(),
               ),
-              onChanged: (value) => inputAddress = value,
+              controller: addressController,
             ),
             const SizedBox(height: 16),
             TextField(
+              autofocus: true,
               decoration: const InputDecoration(
-                labelText: "端口(25565)",
+                labelText: "端口",
                 border: OutlineInputBorder(),
               ),
-              onChanged: (value) => inputAddress = value,
+              controller: portController,
             ),
           ],
         ),
@@ -45,13 +55,15 @@ Future<Map<String, String>?> showAddServerDialog(BuildContext context) {
           ),
           ElevatedButton(
             onPressed: () {
-              final name = inputName.trim().isEmpty
-                  ? 'Server'
-                  : inputName.trim();
-              final address = inputAddress.trim();
-              final portStr = inputPort.trim().isEmpty
-                  ? '25565'
-                  : inputPort.trim();
+              final name = nameController.text.trim().isEmpty
+                  ? initialName
+                  : nameController.text.trim();
+              final address = addressController.text.trim().isEmpty
+                  ? initialAddress
+                  : addressController.text.trim();
+              final portStr = portController.text.trim().isEmpty
+                  ? initialPort
+                  : portController.text.trim();
               final port = int.tryParse(portStr);
 
               if (address.isEmpty) {
@@ -68,14 +80,14 @@ Future<Map<String, String>?> showAddServerDialog(BuildContext context) {
                 return;
               }
 
-              Navigator.pop(context, {
+              Navigator.pop<Map<String, String>>(context, {
                 'name': name,
                 'address': address,
                 'port': port.toString(),
               });
             },
 
-            child: const Text("添加", style: TextStyle(color: Colors.black)),
+            child: const Text("保存", style: TextStyle(color: Colors.black)),
           ),
         ],
       );
