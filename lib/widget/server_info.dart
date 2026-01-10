@@ -145,7 +145,7 @@ class ServerInfoState extends State<ServerInfo> {
                 Builder(
                   builder: (context) {
                     int online = 0;
-                    int max = 1;
+                    int max = 0;
                     if (info != null && info?['players'] != null) {
                       final players = info?['players'];
                       if (players is Map) {
