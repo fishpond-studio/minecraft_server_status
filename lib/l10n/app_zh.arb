@@ -35,5 +35,9 @@
   "lastUpdated": "最后更新",
   "latency": "延迟",
   "editServerTitle": "编辑服务器",
+  "about": "关于",
+  "sponsor": "赞助",
+  "developers": "开发者",
+  "sourceCode": "源代码",
   "save": "保存"
 }

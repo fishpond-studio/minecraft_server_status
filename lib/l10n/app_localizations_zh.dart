@@ -95,26 +95,17 @@ class AppLocalizationsZh extends AppLocalizations {
   String get editServerTitle => '编辑服务器';
 
   @override
+  String get about => '关于';
+
+  @override
+  String get sponsor => '赞助';
+
+  @override
+  String get developers => '开发者';
+
+  @override
+  String get sourceCode => '源代码';
+
+  @override
   String get save => '保存';
-
-  @override
-  String get serverStatus => '服务器状态';
-
-  @override
-  String get online => '在线';
-
-  @override
-  String get offline => '离线';
-
-  @override
-  String get motd => 'MOTD';
-
-  @override
-  String get noMotd => '暂无 MOTD';
-
-  @override
-  String get playersChart => '玩家数折线图';
-
-  @override
-  String get latencyChart => '延迟折线图';
 }

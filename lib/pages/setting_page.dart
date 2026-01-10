@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:is_mc_fk_running/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import '../theme/theme_provider.dart';
+import 'about_page.dart';
 
 class PictureChange extends StatefulWidget {
   const PictureChange({super.key});
@@ -15,7 +16,7 @@ class _PictureChangeState extends State<PictureChange> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -118,12 +119,15 @@ class _PictureChangeState extends State<PictureChange> {
                                     }
                                   },
                                   items: themeProvider.availableColors
-                                      .map<DropdownMenuItem<String>>((String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(value),
-                                    );
-                                  }).toList(),
+                                      .map<DropdownMenuItem<String>>((
+                                        String value,
+                                      ) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(value),
+                                        );
+                                      })
+                                      .toList(),
                                 ),
                               );
                             },
@@ -174,6 +178,67 @@ class _PictureChangeState extends State<PictureChange> {
                   ),
                 ),
               ),
+              //关于&赞助部分
+              Container(
+                margin: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      theme.colorScheme.surface.withValues(alpha: 0.8),
+                      theme.colorScheme.surface.withValues(alpha: 0.5),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                    color: theme.colorScheme.outline.withValues(alpha: 0.2),
+                    width: 1,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: theme.shadowColor.withValues(alpha: 0.1),
+                      blurRadius: 16,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildSettingItem(
+                        context,
+                        icon: Icons.info_outline,
+                        label: l10n.about,
+                        trailing: Icon(
+                          Icons.chevron_right,
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const AboutPage(),
+                            ),
+                          );
+                        },
+                      ),
+                      _buildDivider(context),
+                      _buildSettingItem(
+                        context,
+                        icon: Icons.favorite_border,
+                        label: l10n.sponsor,
+                        trailing: Icon(
+                          Icons.chevron_right,
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -181,30 +246,39 @@ class _PictureChangeState extends State<PictureChange> {
     );
   }
 
-  Widget _buildSettingItem(BuildContext context, {required IconData icon, required String label, required Widget trailing}) {
+  Widget _buildSettingItem(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required Widget trailing,
+    VoidCallback? onTap,
+  }) {
     final theme = Theme.of(context);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      color: theme.colorScheme.surface.withValues(alpha: 0.1),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 24, color: theme.colorScheme.secondary),
-              const SizedBox(width: 16),
-              Text(
-                label,
-                style: TextStyle(
-                  fontFamily: 'FMinecraft',
-                  fontSize: 16,
-                  color: theme.textTheme.bodyLarge?.color,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        color: theme.colorScheme.surface.withValues(alpha: 0.1),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Icon(icon, size: 24, color: theme.colorScheme.secondary),
+                const SizedBox(width: 16),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontFamily: 'FMinecraft',
+                    fontSize: 16,
+                    color: theme.textTheme.bodyLarge?.color,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          trailing,
-        ],
+              ],
+            ),
+            trailing,
+          ],
+        ),
       ),
     );
   }
@@ -215,7 +289,9 @@ class _PictureChangeState extends State<PictureChange> {
       thickness: 1,
       indent: 20,
       endIndent: 20,
-      color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.2),
+      color: Theme.of(
+        context,
+      ).colorScheme.outlineVariant.withValues(alpha: 0.2),
     );
   }
 }

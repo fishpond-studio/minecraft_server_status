@@ -35,5 +35,9 @@
   "lastUpdated": "Last Updated",
   "latency": "Latency",
   "editServerTitle": "Edit Server",
+  "about": "About",
+  "sponsor": "Sponsor",
+  "developers": "Developers",
+  "sourceCode": "Source Code",
   "save": "Save"
 }

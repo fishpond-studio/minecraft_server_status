@@ -95,26 +95,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editServerTitle => 'Edit Server';
 
   @override
+  String get about => 'About';
+
+  @override
+  String get sponsor => 'Sponsor';
+
+  @override
+  String get developers => 'Developers';
+
+  @override
+  String get sourceCode => 'Source Code';
+
+  @override
   String get save => 'Save';
-
-  @override
-  String get serverStatus => 'Server Status';
-
-  @override
-  String get online => 'Online';
-
-  @override
-  String get offline => 'Offline';
-
-  @override
-  String get motd => 'MOTD';
-
-  @override
-  String get noMotd => 'No MOTD';
-
-  @override
-  String get playersChart => 'Players Chart';
-
-  @override
-  String get latencyChart => 'Latency Chart';
 }

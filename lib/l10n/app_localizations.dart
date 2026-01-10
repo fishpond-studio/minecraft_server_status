@@ -263,53 +263,35 @@ abstract class AppLocalizations {
   /// **'Edit Server'**
   String get editServerTitle;
 
+  /// No description provided for @about.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get about;
+
+  /// No description provided for @sponsor.
+  ///
+  /// In en, this message translates to:
+  /// **'Sponsor'**
+  String get sponsor;
+
+  /// No description provided for @developers.
+  ///
+  /// In en, this message translates to:
+  /// **'Developers'**
+  String get developers;
+
+  /// No description provided for @sourceCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Source Code'**
+  String get sourceCode;
+
   /// No description provided for @save.
   ///
   /// In en, this message translates to:
   /// **'Save'**
   String get save;
-
-  /// No description provided for @serverStatus.
-  ///
-  /// In en, this message translates to:
-  /// **'Server Status'**
-  String get serverStatus;
-
-  /// No description provided for @online.
-  ///
-  /// In en, this message translates to:
-  /// **'Online'**
-  String get online;
-
-  /// No description provided for @offline.
-  ///
-  /// In en, this message translates to:
-  /// **'Offline'**
-  String get offline;
-
-  /// No description provided for @motd.
-  ///
-  /// In en, this message translates to:
-  /// **'MOTD'**
-  String get motd;
-
-  /// No description provided for @noMotd.
-  ///
-  /// In en, this message translates to:
-  /// **'No MOTD'**
-  String get noMotd;
-
-  /// No description provided for @playersChart.
-  ///
-  /// In en, this message translates to:
-  /// **'Players Chart'**
-  String get playersChart;
-
-  /// No description provided for @latencyChart.
-  ///
-  /// In en, this message translates to:
-  /// **'Latency Chart'**
-  String get latencyChart;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
