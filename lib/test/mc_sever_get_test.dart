@@ -25,7 +25,7 @@ void main() async {
 
   try {
     final status = await server.getServerStatus();
-    print(status);
+    stdout.writeln(status);
   } catch (e, stack) {
     stderr.writeln(e);
     stderr.writeln(stack);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:is_mc_fk_running/l10n/app_localizations.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:is_mc_fk_running/data/database.dart';
 
@@ -48,6 +49,13 @@ class _HomepageState extends State<Homepage>
     db.updateDataBase();
   }
 
+  void _updateItem(int index, Map<String, dynamic> newItem) {
+    setState(() {
+      db.items[index] = newItem;
+    });
+    db.updateDataBase();
+  }
+
   /// 弹出输入框
   Future<void> _showAddDialog() async {
     // 弹出对话框 等待输入
@@ -57,43 +65,73 @@ class _HomepageState extends State<Homepage>
     }
   }
 
+  /// 弹出编辑框
+  Future<void> _showEditDialog(int index, Map<String, dynamic> item) async {
+    final result = await showAddServerDialog(context, initialValue: item);
+    if (result != null) {
+      if (result['delete'] == true) {
+        _removeItem(index);
+      } else {
+        _updateItem(index, {...item, ...result});
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context); // 必须调用super.build(context)
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
+      extendBodyBehindAppBar: true, // Allow body to extend behind AppBar
       appBar: AppBar(
         centerTitle: true,
+        elevation: 0,
         title: Text(
-          'Servers',
+          l10n.servers,
           style: TextStyle(
             fontFamily: Theme.of(context).textTheme.bodyMedium?.fontFamily,
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+            color: Theme.of(context).colorScheme.primary,
           ),
         ),
         actions: [
-          IconButton(onPressed: null, icon: const Icon(Icons.cached, size: 20)),
+          // IconButton(onPressed: null, icon: const Icon(Icons.cached, size: 20)),
         ],
-        backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.15),
+        backgroundColor: Colors.transparent, // Transparent to show gradient
       ),
 
       body: Container(
-        color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
-        child: GridView.builder(
-          padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Theme.of(context).colorScheme.surface,
+              Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
+              Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+            ],
+          ),
+        ),
+        child: SafeArea( // Use SafeArea to avoid overlap with system UI
+          child: GridView.builder(
+            padding: const EdgeInsets.all(16),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2, // 每行两列
             crossAxisSpacing: 16, // 列间距
             mainAxisSpacing: 16, // 行间距
-            childAspectRatio: 0.9, // 宽高比，根据 ServerCard 调整
+            childAspectRatio: 0.75, // 宽高比，根据 ServerCard 调整
           ),
           itemCount: db.items.length,
           itemBuilder: (context, index) {
             return ServerCard(
               item: db.items[index],
-              onDelete: () => _removeItem(index),
+              onEdit: () => _showEditDialog(index, db.items[index]),
             );
           },
         ),
       ),
+    ),
 
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,

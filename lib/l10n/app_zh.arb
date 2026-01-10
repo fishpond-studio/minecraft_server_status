@@ -1,0 +1,39 @@
+{
+  "@@locale": "zh",
+  "appTitle": "Is MC FK Running?",
+  "home": "主页",
+  "settings": "设置",
+  "servers": "服务器",
+  "dayNightMode": "日间/夜晚模式",
+  "changeThemeColor": "更换主题颜色",
+  "language": "语言",
+  "languageSystem": "跟随系统",
+  "languageChinese": "中文",
+  "languageEnglish": "English",
+  "addServerTitle": "添加新服务器",
+  "nameLabel": "名称(Server)",
+  "addressLabel": "地址",
+  "portLabel": "端口(25565)",
+  "cancel": "取消",
+  "add": "添加",
+  "delete": "删除",
+  "confirmDeleteServer": "确定要删除服务器 {serverName} 吗？",
+  "@confirmDeleteServer": {
+    "placeholders": {
+      "serverName": {
+        "type": "String"
+      }
+    }
+  },
+  "enterAddress": "请输入地址",
+  "invalidPort": "端口号必须为1-65535之间的数字",
+  "defaultServerName": "Server",
+  "notAvailable": "N/A",
+  "onlinePlayers": "在线人数",
+  "version": "版本",
+  "worldName": "存档名称",
+  "lastUpdated": "最后更新",
+  "latency": "延迟",
+  "editServerTitle": "编辑服务器",
+  "save": "保存"
+}

@@ -1,0 +1,39 @@
+{
+  "@@locale": "en",
+  "appTitle": "Is MC FK Running?",
+  "home": "Home",
+  "settings": "Settings",
+  "servers": "Servers",
+  "dayNightMode": "Day/Night Mode",
+  "changeThemeColor": "Theme Color",
+  "language": "Language",
+  "languageSystem": "System",
+  "languageChinese": "中文",
+  "languageEnglish": "English",
+  "addServerTitle": "Add Server",
+  "nameLabel": "Name (Server)",
+  "addressLabel": "Address",
+  "portLabel": "Port (25565)",
+  "cancel": "Cancel",
+  "add": "Add",
+  "delete": "Delete",
+  "confirmDeleteServer": "Delete server {serverName}?",
+  "@confirmDeleteServer": {
+    "placeholders": {
+      "serverName": {
+        "type": "String"
+      }
+    }
+  },
+  "enterAddress": "Please enter an address",
+  "invalidPort": "Port must be a number between 1 and 65535",
+  "defaultServerName": "Server",
+  "notAvailable": "N/A",
+  "onlinePlayers": "Online Players",
+  "version": "Version",
+  "worldName": "World Name",
+  "lastUpdated": "Last Updated",
+  "latency": "Latency",
+  "editServerTitle": "Edit Server",
+  "save": "Save"
+}

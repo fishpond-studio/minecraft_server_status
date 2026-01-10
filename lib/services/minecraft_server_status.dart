@@ -184,7 +184,10 @@ class MinecraftServerStatus {
 
   Future<Map<String, dynamic>> getServerStatus() async {
     try {
+      final stopwatch = Stopwatch()..start();
       final received = await _socketConnect();
+      stopwatch.stop();
+      final latency = stopwatch.elapsedMilliseconds;
       int offset = 0;
 
       // 验证数据长度
@@ -234,7 +237,9 @@ class MinecraftServerStatus {
       final jsonString = utf8.decode(jsonData);
 
       try {
-        return jsonDecode(jsonString) as Map<String, dynamic>;
+        final result = jsonDecode(jsonString) as Map<String, dynamic>;
+        result['latency'] = latency;
+        return result;
       } catch (e) {
         throw MinecraftParseException(
           'JSON parsing failed: $e\nJSON content: $jsonString',

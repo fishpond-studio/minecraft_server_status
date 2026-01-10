@@ -3,9 +3,9 @@ import 'package:is_mc_fk_running/widget/server_info.dart';
 
 class ServerCard extends StatelessWidget {
   final Map<String, dynamic> item;
-  final VoidCallback onDelete;
+  final VoidCallback onEdit;
 
-  const ServerCard({super.key, required this.item, required this.onDelete});
+  const ServerCard({super.key, required this.item, required this.onEdit});
 
   @override
   Widget build(BuildContext context) {
@@ -18,22 +18,27 @@ class ServerCard extends StatelessWidget {
               width: double.infinity,
               height: double.infinity,
               decoration: BoxDecoration(
-                color: Theme.of(
-                  context,
-                ).primaryColor.withValues(alpha: 0.4), //半透明替代毛玻璃背景
-                borderRadius: BorderRadius.circular(30),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
+                    Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(24),
                 border: Border.all(
-                  color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
-                  width: 1.5,
+                  color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+                  width: 1,
                 ),
                 //边框效果
                 boxShadow: [
                   BoxShadow(
                     color: Theme.of(
                       context,
-                    ).primaryColor.withValues(alpha: 0.6),
-                    blurRadius: 8,
-                    offset: Offset(2, 5),
+                    ).shadowColor.withValues(alpha: 0.1),
+                    blurRadius: 16,
+                    offset: Offset(0, 8),
                   ),
                 ], //阴影效果
               ),
@@ -41,23 +46,20 @@ class ServerCard extends StatelessWidget {
           ),
           // 卡片内容
           Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 15,
-              vertical: 15,
-            ), // 内边距
+            padding: const EdgeInsets.all(12), // 内边距
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 //信息显示
                 Expanded(
                   flex: 13,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.6), //低明度
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
                       child: ServerInfo(
                         host: item['address'],
                         port: item['port'],
@@ -65,186 +67,58 @@ class ServerCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 9), // 底部栏上方间隔
+                const SizedBox(height: 12), // 底部栏上方间隔
                 //组件底部显示状态栏
-                Expanded(
-                  flex: 2,
+                SizedBox(
+                  height: 40,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       //运行状态
-                      Expanded(
-                        flex: 2,
-                        child: SizedBox.expand(
-                          child: ElevatedButton(
-                            style: ButtonStyle(
-                              padding: WidgetStateProperty.all(EdgeInsets.zero),
-                              alignment: Alignment.center,
-
-                              backgroundColor:
-                                  WidgetStateProperty.resolveWith<Color?>((
-                                    states,
-                                  ) {
-                                    if (item['running']) {
-                                      // 按下时
-                                      if (states.contains(
-                                        WidgetState.pressed,
-                                      )) {
-                                        return Colors.green[400]?.withValues(
-                                          alpha: 0.9,
-                                        );
-                                      }
-                                      // 默认
-                                      return Colors.green[200]?.withValues(
-                                        alpha: 0.9,
-                                      );
-                                    } else {
-                                      // 按下时
-                                      if (states.contains(
-                                        WidgetState.pressed,
-                                      )) {
-                                        return Colors.red[400]?.withValues(
-                                          alpha: 0.9,
-                                        );
-                                      }
-                                      // 默认
-                                      return Colors.red[200]?.withValues(
-                                        alpha: 0.9,
-                                      );
-                                    }
-                                  }),
-                            ),
-                            onPressed: () {},
-                            child: Icon(
-                              item['running']
-                                  ? Icons.power_settings_new
-                                  : Icons.close,
-                              color: Colors.white,
-                              size: 20,
-                            ),
-                          ),
-                        ),
+                      _buildActionButton(
+                        context,
+                        icon: item['running'] ? Icons.power_settings_new : Icons.play_arrow_rounded,
+                        color: item['running'] ? Colors.green : Colors.orange,
+                        // 切换运行状态按钮
+                        onTap: () {
+                           // TODO: 实现切换运行状态功能
+                        },
                       ),
+                      
                       // Server名称
                       Expanded(
-                        flex: 5,
                         child: Container(
-                          //内边距
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 5,
-                            vertical: 0,
-                          ),
-                          margin: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 0,
-                          ), // 名称栏左右间隔
+                          margin: const EdgeInsets.symmetric(horizontal: 8),
                           decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.7), // 透明度
-                            borderRadius: BorderRadius.circular(15),
-                            // 边框
+                            color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
+                            borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.primary.withValues(alpha: 0.5),
-                              width: 1.5,
+                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                             ),
-                            //阴影
-                            boxShadow: [
-                              BoxShadow(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.primary.withValues(alpha: 1),
-                                spreadRadius: 1,
-                                blurRadius: 3,
-                                offset: Offset(1, 2), // 阴影方向
-                              ),
-                            ],
                           ),
                           child: Center(
-                            child: FittedBox(
-                              alignment: Alignment.center,
-                              fit: BoxFit.scaleDown,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
                               child: Text(
                                 item['name'],
                                 overflow: TextOverflow.visible,
-                                softWrap: false,
                                 style: TextStyle(
-                                  fontSize: 200, // 设置一个较大的默认值，让FittedBox调整
-                                  color: Theme.of(context).colorScheme.primary
-                                      .withAlpha(200)
-                                      .withBlue(100)
-                                      .withGreen(150),
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontSize: 16,
                                 ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                      //删除按钮
-                      Expanded(
-                        flex: 2,
-                        child: SizedBox.expand(
-                          child: ElevatedButton(
-                            style: ButtonStyle(
-                              padding: WidgetStateProperty.all(EdgeInsets.zero),
-                              alignment: Alignment.center,
-
-                              backgroundColor:
-                                  WidgetStateProperty.resolveWith<Color?>((
-                                    states,
-                                  ) {
-                                    // 按下时
-                                    if (states.contains(WidgetState.pressed)) {
-                                      return Colors.red[400]?.withValues(
-                                        alpha: 0.9,
-                                      );
-                                    }
-                                    // 默认
-                                    return Colors.red[200]?.withValues(
-                                      alpha: 0.9,
-                                    );
-                                  }),
-                            ),
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    title: const Text("确认删除"),
-                                    content: Text(
-                                      "确定要删除服务器 ${item['name']} 吗？",
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(context),
-                                        child: const Text("取消"),
-                                      ),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.pop(context); //删除之后取消对话框
-                                          onDelete();
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.red[300]
-                                              ?.withValues(alpha: 0.9),
-                                        ),
-                                        child: const Text(
-                                          "删除",
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                            child: const Icon(
-                              Icons.delete,
-                              color: Colors.white,
-                              size: 20,
-                            ),
-                          ),
-                        ),
+                      
+                      //编辑按钮
+                      _buildActionButton(
+                        context,
+                        icon: Icons.edit,
+                        color: Colors.blue,
+                        onTap: onEdit,
                       ),
                     ],
                   ),
@@ -253,6 +127,25 @@ class ServerCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildActionButton(BuildContext context, {required IconData icon, required Color color, required VoidCallback onTap}) {
+    return AspectRatio(
+      aspectRatio: 1,
+      child: Material(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: onTap,
+          child: Icon(
+            icon,
+            color: color,
+            size: 20,
+          ),
+        ),
       ),
     );
   }

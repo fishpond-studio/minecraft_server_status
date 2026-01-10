@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:is_mc_fk_running/l10n/app_localizations.dart';
 import 'package:is_mc_fk_running/services/minecraft_server_status.dart';
 
 class ServerInfo extends StatefulWidget {
@@ -14,6 +16,7 @@ class ServerInfo extends StatefulWidget {
 class _ServerInfoState extends State<ServerInfo> {
   late MinecraftServerStatus server;
   Map? info;
+  DateTime? lastUpdated;
 
   @override
   void initState() {
@@ -28,113 +31,190 @@ class _ServerInfoState extends State<ServerInfo> {
   Future<void> _loadServerInfo() async {
     try {
       info = await server.getServerStatus();
+      lastUpdated = DateTime.now();
     } catch (e) {
       info = {'online': false, 'error': e.toString()};
     }
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox.expand(
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      color: theme.colorScheme.surface.withValues(alpha: 0.5),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          //图标&服务器名称
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(color: Colors.white),
-              child: Row(
-                children: [
-                  //图标
-                  Expanded(
-                    flex: 1,
-                    child: Container(
-                      width: 25,
-                      decoration: BoxDecoration(color: Colors.red),
-                      child: Center(child: Icon(Icons.abc)),
-                    ),
+          // 头部：图标 + 地址
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(Icons.dns, size: 20, color: theme.colorScheme.primary),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  '${widget.host}:${widget.port}',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.onSurface,
                   ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
 
-                  //服务器IP
-                  Expanded(
-                    flex: 5,
-                    child: FittedBox(
-                      alignment: Alignment.center,
-                      fit: BoxFit.fitWidth,
-                      child: Container(
-                        //内边距
-                        padding: EdgeInsets.symmetric(horizontal: 50),
-                        child: Text(
-                          '${widget.host}:${widget.port}',
-                          overflow: TextOverflow.visible,
-                          softWrap: false,
-                          style: TextStyle(fontSize: 200),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Divider(
+              height: 1,
+              thickness: 1,
+              color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+            ),
+          ),
+
+          //版本、世界名称、延迟、最后更新时间
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildInfoRow(
+                  context,
+                  Icons.info_outline,
+                  l10n.version,
+                  info?['version'] ?? l10n.notAvailable,
+                ),
+                _buildInfoRow(
+                  context,
+                  Icons.map_outlined,
+                  l10n.worldName,
+                  info?['world_name'] ?? l10n.notAvailable,
+                ),
+                _buildInfoRow(
+                  context,
+                  Icons.timer_outlined,
+                  l10n.latency,
+                  info != null && info!.containsKey('latency')
+                      ? '${info!['latency']} ms'
+                      : l10n.notAvailable,
+                ),
+                _buildInfoRow(
+                  context,
+                  Icons.access_time,
+                  l10n.lastUpdated,
+                  lastUpdated != null
+                      ? DateFormat('HH:mm:ss').format(lastUpdated!)
+                      : l10n.notAvailable,
+                ),
+
+                // 玩家信息
+                Builder(
+                  builder: (context) {
+                    int online = 0;
+                    int max = 1;
+                    if (info != null && info!['players'] != null) {
+                      final players = info!['players'];
+                      if (players is Map) {
+                        online = players['online'] ?? 0;
+                        max = players['max'] ?? 1;
+                      }
+                    }
+                    if (max == 0) max = 1;
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // 玩家数量
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.people_outline,
+                                  size: 16,
+                                  color: theme.colorScheme.secondary,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  l10n.onlinePlayers,
+                                  style: theme.textTheme.bodySmall,
+                                ),
+                              ],
+                            ),
+                            Text(
+                              '$online / $max',
+                              style: theme.textTheme.bodySmall,
+                            ),
+                          ],
                         ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          //分割线
-          Divider(
-            color: Colors.grey[800],
-            thickness: 0.3,
-            height: 0.3, //消除空隙
-            indent: 16,
-            endIndent: 16,
-          ),
-
-          //服务器版本
-          Expanded(
-            child: FittedBox(
-              fit: BoxFit.fitWidth,
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 50),
-                child: Text(
-                  info?['version'] ?? 'N/A',
-                  overflow: TextOverflow.visible,
-                  softWrap: false,
-                  style: TextStyle(fontSize: 200),
+                        const SizedBox(height: 4),
+                        LinearProgressIndicator(
+                          value: online / max,
+                          minHeight: 6,
+                          borderRadius: BorderRadius.circular(3),
+                          backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            online / max > 0.9 ? Colors.red : Colors.green,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
-              ),
+              ],
             ),
           ),
-
-          //world name
-          Expanded(
-            child: FittedBox(
-              fit: BoxFit.fitWidth,
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 50),
-                child: Text(
-                  info?['world_name'] ?? 'N/A',
-                  overflow: TextOverflow.visible,
-                  softWrap: false,
-                  style: TextStyle(fontSize: 200),
-                ),
-              ),
-            ),
-          ),
-
-          //服务器信息更新最后时间
-          Expanded(child: Container()),
-
-          //服务器客户端类型
-          Expanded(child: Container()),
-
-          //服务器延迟
-          Expanded(child: Container()),
-
-          //服务器人数(进度条)
-          Expanded(child: Container()),
-
-          //服务器占用(进度条)
-          Expanded(child: Container()),
         ],
       ),
+    );
+  }
+
+  Widget _buildInfoRow(
+    BuildContext context,
+    IconData icon,
+    String label,
+    String value,
+  ) {
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: Theme.of(context).colorScheme.secondary),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // 标签文本
+              Text(
+                label,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  value,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.end,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

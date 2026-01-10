@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:is_mc_fk_running/l10n/app_localizations.dart';
 import 'home_page.dart';
 import 'setting_page.dart';
 
@@ -20,6 +21,7 @@ class _RoutesPagesState extends State<RoutesPages> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: PageView(
         controller: _pageController,
@@ -47,14 +49,14 @@ class _RoutesPagesState extends State<RoutesPages> {
           );
         },
         elevation: 0,
-        items: const [
+        items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home, size: 20),
-            label: 'Home',
+            label: l10n.home,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings, size: 20),
-            label: 'Settings',
+            label: l10n.settings,
           ),
         ],
         selectedItemColor: Theme.of(
