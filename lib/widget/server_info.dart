@@ -1,21 +1,13 @@
-import 'dart:convert';
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:is_mc_fk_running/l10n/app_localizations.dart';
 import 'package:is_mc_fk_running/services/minecraft_server_status.dart';
-import 'package:is_mc_fk_running/widget/server_info_controller.dart';
 
 class ServerInfo extends StatefulWidget {
   final String host;
   final String port;
-  final ServerInfoController controller;
 
-  const ServerInfo({
-    super.key,
-    required this.host,
-    required this.port,
-    required this.controller,
-  });
+  const ServerInfo({super.key, required this.host, required this.port});
 
   @override
   State<ServerInfo> createState() => ServerInfoState();
@@ -24,12 +16,12 @@ class ServerInfo extends StatefulWidget {
 class ServerInfoState extends State<ServerInfo> {
   late MinecraftServerStatus server;
   Map? info;
+  DateTime? lastUpdated;
 
   @override
   void initState() {
     super.initState();
     _initServer();
-    widget.controller.refresh = loadServerInfo;
   }
 
   void _initServer() {
@@ -50,90 +42,202 @@ class ServerInfoState extends State<ServerInfo> {
 
   @override
   void dispose() {
-    widget.controller.refresh = null;
     super.dispose();
   }
 
   Future<void> loadServerInfo() async {
     try {
-      final data = await server.getServerStatus();
-      if (!mounted) return;
-      setState(() => info = data);
+      info = await server.getServerStatus();
+      lastUpdated = DateTime.now();
     } catch (e) {
       if (!mounted) return;
       setState(() => info = {'online': false, 'error': e.toString()});
+    }
+    if (mounted) {
+      setState(() {});
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox.expand(
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            // 背景图（不透明，供模糊）
-            if (info?["favicon"] != null)
-              Image.memory(
-                base64Decode(info!["favicon"].split(',').last),
-                fit: BoxFit.cover,
-              ),
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
 
-            // 模糊层（只模糊背景）
-            BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-              child: Container(
-                color: Colors.white.withValues(alpha: 0.3), // 磨砂遮罩
+    return Container(
+      padding: const EdgeInsets.all(12),
+      color: theme.colorScheme.surface.withValues(alpha: 0.5),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 头部：图标 + 地址
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.dns,
+                  size: 20,
+                  color: theme.colorScheme.primary,
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                children: [
-                  //服务器版本
-                  Expanded(
-                    child: Container(
-                      child: Text('${info?['version']?['name']}'),
-                    ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  '${widget.host}:${widget.port}',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.onSurface,
                   ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
 
-                  //world name
-                  Expanded(
-                    child: FittedBox(
-                      fit: BoxFit.fitWidth,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 50),
-                        child: Text(
-                          info?['description'] ?? 'N/A',
-                          overflow: TextOverflow.visible,
-                          softWrap: false,
-                          style: TextStyle(fontSize: 200),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Divider(
+              height: 1,
+              thickness: 1,
+              color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+            ),
+          ),
+
+          //版本、世界名称、延迟、最后更新时间
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildInfoRow(
+                  context,
+                  Icons.info_outline,
+                  l10n.version,
+                  info?['version']?['name'] ?? l10n.notAvailable,
+                ),
+                _buildInfoRow(
+                  context,
+                  Icons.map_outlined,
+                  l10n.worldName,
+                  info?['description'] ?? l10n.notAvailable,
+                ),
+                _buildInfoRow(
+                  context,
+                  Icons.timer_outlined,
+                  l10n.latency,
+                  info != null && info!.containsKey('latency')
+                      ? '${info?['latency']} ms'
+                      : l10n.notAvailable,
+                ),
+                _buildInfoRow(
+                  context,
+                  Icons.access_time,
+                  l10n.lastUpdated,
+                  lastUpdated != null
+                      ? DateFormat('HH:mm:ss').format(lastUpdated!)
+                      : l10n.notAvailable,
+                ),
+
+                // 玩家信息
+                Builder(
+                  builder: (context) {
+                    int online = 0;
+                    int max = 0;
+                    if (info != null && info?['players'] != null) {
+                      final players = info?['players'];
+                      if (players is Map) {
+                        online = players['online'] ?? 0;
+                        max = players['max'] ?? 8;
+                      }
+                    }
+                    if (max == 0) max = 8;
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // 玩家数量
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.people_outline,
+                                  size: 16,
+                                  color: theme.colorScheme.secondary,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  l10n.onlinePlayers,
+                                  style: theme.textTheme.bodySmall,
+                                ),
+                              ],
+                            ),
+                            Text(
+                              '$online / $max',
+                              style: theme.textTheme.bodySmall,
+                            ),
+                          ],
                         ),
-                      ),
-                    ),
-                  ),
-
-                  //服务器信息更新最后时间
-                  Expanded(child: Container()),
-
-                  //服务器客户端类型
-                  Expanded(child: Container()),
-
-                  //服务器延迟
-                  Expanded(child: Container()),
-
-                  //服务器人数(进度条)
-                  Expanded(child: Container()),
-
-                  //服务器占用(进度条)
-                  Expanded(child: Container()),
-                ],
-              ),
+                        const SizedBox(height: 4),
+                        LinearProgressIndicator(
+                          value: online / max,
+                          minHeight: 6,
+                          borderRadius: BorderRadius.circular(3),
+                          backgroundColor:
+                              theme.colorScheme.surfaceContainerHighest,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            online / max > 0.9 ? Colors.red : Colors.green,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
+    );
+  }
+
+  Widget _buildInfoRow(
+    BuildContext context,
+    IconData icon,
+    String label,
+    String value,
+  ) {
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: Theme.of(context).colorScheme.secondary),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // 标签文本
+              Text(
+                label,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  value,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.end,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
