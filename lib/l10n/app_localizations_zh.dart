@@ -42,13 +42,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get addServerTitle => '添加新服务器';
 
   @override
-  String get nameLabel => '名称(Server)';
+  String get nameLabel => '名称';
 
   @override
   String get addressLabel => '地址';
 
   @override
-  String get portLabel => '端口(25565)';
+  String get portLabel => '端口';
 
   @override
   String get cancel => '取消';
@@ -108,4 +108,58 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get save => '保存';
+
+  @override
+  String get serverDetails => '服务器详情';
+
+  @override
+  String get playerCount => '玩家人数';
+
+  @override
+  String get serverLoad => '服务器占用';
+
+  @override
+  String get pingLatency => '延迟';
+
+  @override
+  String get players => '玩家';
+
+  @override
+  String get usage => '占用率';
+
+  @override
+  String get ms => '毫秒';
+
+  @override
+  String get last24Hours => '最近24小时';
+
+  @override
+  String get noData => '暂无数据';
+
+  @override
+  String get sponsorTitle => '诶?你真的要赞助吗?';
+
+  @override
+  String get sponsorBenefitsTitle => '赞助后可以得到什么?';
+
+  @override
+  String get sponsorBenefit1 => '1. 你的名字将被放在应用的赞助列表中(其实没有)';
+
+  @override
+  String get sponsorBenefit2 => '2. 将会得到IDK的抱抱~~';
+
+  @override
+  String get sponsorNote => '别赞助啦，只是个练手的小项目，快来我的群里玩一玩';
+
+  @override
+  String get joinCommunity => '加入社区';
+
+  @override
+  String get communityName => '群组名称';
+
+  @override
+  String get communityId => '群号/链接';
+
+  @override
+  String get copy => '复制';
 }

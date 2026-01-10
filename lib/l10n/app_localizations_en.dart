@@ -42,13 +42,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addServerTitle => 'Add Server';
 
   @override
-  String get nameLabel => 'Name (Server)';
+  String get nameLabel => 'Name';
 
   @override
   String get addressLabel => 'Address';
 
   @override
-  String get portLabel => 'Port (25565)';
+  String get portLabel => 'Port';
 
   @override
   String get cancel => 'Cancel';
@@ -108,4 +108,60 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get save => 'Save';
+
+  @override
+  String get serverDetails => 'Server Details';
+
+  @override
+  String get playerCount => 'Player Count';
+
+  @override
+  String get serverLoad => 'Server Load';
+
+  @override
+  String get pingLatency => 'Ping Latency';
+
+  @override
+  String get players => 'Players';
+
+  @override
+  String get usage => 'Usage';
+
+  @override
+  String get ms => 'ms';
+
+  @override
+  String get last24Hours => 'Last 24 Hours';
+
+  @override
+  String get noData => 'No data available';
+
+  @override
+  String get sponsorTitle => 'Eh? You really want to sponsor?';
+
+  @override
+  String get sponsorBenefitsTitle => 'What do you get for sponsoring?';
+
+  @override
+  String get sponsorBenefit1 =>
+      '1. Your name will be listed in the sponsor list(Actually there is no sponsor list)';
+
+  @override
+  String get sponsorBenefit2 => '2. You get a hug from IDK~~';
+
+  @override
+  String get sponsorNote =>
+      'Don\'t sponsor! It\'s just a practice project. Come hang out in our community instead!';
+
+  @override
+  String get joinCommunity => 'Join Community';
+
+  @override
+  String get communityName => 'Group Name';
+
+  @override
+  String get communityId => 'Group ID/Link';
+
+  @override
+  String get copy => 'Copy';
 }

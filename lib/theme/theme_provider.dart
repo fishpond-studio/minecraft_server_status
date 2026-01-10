@@ -55,6 +55,8 @@ class ThemeProvider with ChangeNotifier {
 
   bool get isDarkMode => _isDarkMode;
 
+  ThemeData get theme => getTheme();
+
   void changeLocaleTag(String tag) {
     if (tag == 'system') {
       _localeTag = null;

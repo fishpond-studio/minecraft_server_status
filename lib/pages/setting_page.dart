@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:is_mc_fk_running/l10n/app_localizations.dart';
+import 'package:is_mc_fk_running/pages/sponsor_page.dart';
 import 'package:provider/provider.dart';
 import '../theme/theme_provider.dart';
 import 'about_page.dart';
@@ -234,6 +235,14 @@ class _PictureChangeState extends State<PictureChange> {
                           Icons.chevron_right,
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const SponsorPage(),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),

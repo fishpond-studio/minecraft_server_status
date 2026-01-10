@@ -32,7 +32,7 @@ Future<Map<String, dynamic>?> showAddServerDialog(
               initialValue: inputName,
               autofocus: !isEditing,
               decoration: InputDecoration(
-                labelText: l10n.nameLabel,
+                labelText: '${l10n.nameLabel}(Server)',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),

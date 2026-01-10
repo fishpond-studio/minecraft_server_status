@@ -164,7 +164,7 @@ abstract class AppLocalizations {
   /// No description provided for @nameLabel.
   ///
   /// In en, this message translates to:
-  /// **'Name (Server)'**
+  /// **'Name'**
   String get nameLabel;
 
   /// No description provided for @addressLabel.
@@ -176,7 +176,7 @@ abstract class AppLocalizations {
   /// No description provided for @portLabel.
   ///
   /// In en, this message translates to:
-  /// **'Port (25565)'**
+  /// **'Port'**
   String get portLabel;
 
   /// No description provided for @cancel.
@@ -292,6 +292,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save'**
   String get save;
+
+  /// No description provided for @serverDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Server Details'**
+  String get serverDetails;
+
+  /// No description provided for @playerCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Player Count'**
+  String get playerCount;
+
+  /// No description provided for @serverLoad.
+  ///
+  /// In en, this message translates to:
+  /// **'Server Load'**
+  String get serverLoad;
+
+  /// No description provided for @pingLatency.
+  ///
+  /// In en, this message translates to:
+  /// **'Ping Latency'**
+  String get pingLatency;
+
+  /// No description provided for @players.
+  ///
+  /// In en, this message translates to:
+  /// **'Players'**
+  String get players;
+
+  /// No description provided for @usage.
+  ///
+  /// In en, this message translates to:
+  /// **'Usage'**
+  String get usage;
+
+  /// No description provided for @ms.
+  ///
+  /// In en, this message translates to:
+  /// **'ms'**
+  String get ms;
+
+  /// No description provided for @last24Hours.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 24 Hours'**
+  String get last24Hours;
+
+  /// No description provided for @noData.
+  ///
+  /// In en, this message translates to:
+  /// **'No data available'**
+  String get noData;
+
+  /// No description provided for @sponsorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Eh? You really want to sponsor?'**
+  String get sponsorTitle;
+
+  /// No description provided for @sponsorBenefitsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What do you get for sponsoring?'**
+  String get sponsorBenefitsTitle;
+
+  /// No description provided for @sponsorBenefit1.
+  ///
+  /// In en, this message translates to:
+  /// **'1. Your name will be listed in the sponsor list'**
+  String get sponsorBenefit1;
+
+  /// No description provided for @sponsorBenefit2.
+  ///
+  /// In en, this message translates to:
+  /// **'2. You get a hug from IDK~~'**
+  String get sponsorBenefit2;
+
+  /// No description provided for @sponsorNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t sponsor! It\'s just a practice project. Come hang out in our community instead!'**
+  String get sponsorNote;
+
+  /// No description provided for @joinCommunity.
+  ///
+  /// In en, this message translates to:
+  /// **'Join Community'**
+  String get joinCommunity;
+
+  /// No description provided for @communityName.
+  ///
+  /// In en, this message translates to:
+  /// **'Group Name'**
+  String get communityName;
+
+  /// No description provided for @communityId.
+  ///
+  /// In en, this message translates to:
+  /// **'Group ID/Link'**
+  String get communityId;
+
+  /// No description provided for @copy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get copy;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
