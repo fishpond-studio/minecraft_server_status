@@ -119,7 +119,7 @@ class _HomepageState extends State<Homepage>
           child: GridView.builder(
             padding: const EdgeInsets.all(16),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, // 每行两列
+              crossAxisCount: 1, // 每行两列
               crossAxisSpacing: 16, // 列间距
               mainAxisSpacing: 16, // 行间距
               childAspectRatio: 0.75, // 宽高比，根据 ServerCard 调整

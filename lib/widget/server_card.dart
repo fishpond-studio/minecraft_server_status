@@ -94,19 +94,6 @@ class ServerCard extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        //运行状态
-                        _buildActionButton(
-                          context,
-                          icon: item['running']
-                              ? Icons.power_settings_new
-                              : Icons.play_arrow_rounded,
-                          color: item['running'] ? Colors.green : Colors.orange,
-                          // 切换运行状态按钮
-                          onTap: () {
-                            // TODO: 实现切换运行状态功能
-                          },
-                        ),
-
                         // Server名称
                         Expanded(
                           child: Container(

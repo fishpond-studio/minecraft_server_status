@@ -30,24 +30,6 @@ class _ServerDetailPageState extends State<ServerDetailPage> {
     //     .toList() ?? [];
   }
 
-  // TODO: 服务器占用数据 - 请接入真实数据源
-  // 数据格式: List<FlSpot>，其中 FlSpot(x, y)
-  //   - x: 时间点（0-23 表示24小时）
-  //   - y: 服务器占用率（0-100%）
-  // 示例: [FlSpot(0, 45.5), FlSpot(1, 52.3), FlSpot(2, 48.7), ...]
-  // 可以监控CPU、内存、磁盘等资源使用情况
-  List<FlSpot> _getServerLoadData() {
-    // 返回空数据，等待接入真实数据
-    return [];
-
-    // 接入真实数据示例（取消注释并修改）:
-    // return widget.serverItem['loadHistory']
-    //     ?.asMap()
-    //     .entries
-    //     .map((entry) => FlSpot(entry.key.toDouble(), entry.value.toDouble()))
-    //     .toList() ?? [];
-  }
-
   // TODO: 延迟数据 - 请接入真实数据源
   // 数据格式: List<FlSpot>，其中 FlSpot(x, y)
   //   - x: 时间点（0-23 表示24小时）
@@ -127,19 +109,6 @@ class _ServerDetailPageState extends State<ServerDetailPage> {
                   unit: l10n.players,
                   maxY: 70,
                 ),
-                const SizedBox(height: 24),
-
-                // 服务器占用折线图
-                _buildChartCard(
-                  context,
-                  title: l10n.serverLoad,
-                  subtitle: l10n.last24Hours,
-                  data: _getServerLoadData(),
-                  color: Colors.orange,
-                  unit: '%',
-                  maxY: 100,
-                ),
-                const SizedBox(height: 24),
 
                 // 延迟折线图
                 _buildChartCard(

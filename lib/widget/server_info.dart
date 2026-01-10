@@ -116,20 +116,20 @@ class ServerInfoState extends State<ServerInfo> {
                   context,
                   Icons.info_outline,
                   l10n.version,
-                  info?['version'] ?? l10n.notAvailable,
+                  info?['version']?['name'] ?? l10n.notAvailable,
                 ),
                 _buildInfoRow(
                   context,
                   Icons.map_outlined,
                   l10n.worldName,
-                  info?['world_name'] ?? l10n.notAvailable,
+                  info?['description'] ?? l10n.notAvailable,
                 ),
                 _buildInfoRow(
                   context,
                   Icons.timer_outlined,
                   l10n.latency,
                   info != null && info!.containsKey('latency')
-                      ? '${info!['latency']} ms'
+                      ? '${info?['latency']} ms'
                       : l10n.notAvailable,
                 ),
                 _buildInfoRow(
@@ -146,14 +146,14 @@ class ServerInfoState extends State<ServerInfo> {
                   builder: (context) {
                     int online = 0;
                     int max = 1;
-                    if (info != null && info!['players'] != null) {
-                      final players = info!['players'];
+                    if (info != null && info?['players'] != null) {
+                      final players = info?['players'];
                       if (players is Map) {
                         online = players['online'] ?? 0;
-                        max = players['max'] ?? 1;
+                        max = players['max'] ?? 8;
                       }
                     }
-                    if (max == 0) max = 1;
+                    if (max == 0) max = 8;
 
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
