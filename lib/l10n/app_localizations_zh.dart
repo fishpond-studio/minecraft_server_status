@@ -180,4 +180,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get fontJetBrainsMono => 'JetBrains Mono';
+
+  @override
+  String get refresh => '刷新';
+
+  @override
+  String get addServer => '添加服务器';
 }

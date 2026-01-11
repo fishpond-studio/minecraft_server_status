@@ -111,12 +111,14 @@ class ThemeProvider with ChangeNotifier {
   }
 
   ThemeData getTheme() {
+    // Ensure the color is fully opaque for the seed to work best with Material 3
+    final seedColor = currentColor.withValues(alpha: 1.0);
+
     return ThemeData(
       fontFamily: _currentFontFamily == 'System' ? null : _currentFontFamily,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: currentColor,
+        seedColor: seedColor,
         brightness: _isDarkMode ? Brightness.dark : Brightness.light,
-        primary: currentColor.withValues(alpha: 0.5),
       ),
       useMaterial3: true,
     );

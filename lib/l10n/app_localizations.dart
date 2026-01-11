@@ -436,6 +436,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'JetBrains Mono'**
   String get fontJetBrainsMono;
+
+  /// No description provided for @refresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get refresh;
+
+  /// No description provided for @addServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Server'**
+  String get addServer;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

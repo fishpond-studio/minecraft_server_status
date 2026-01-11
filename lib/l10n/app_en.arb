@@ -63,5 +63,7 @@
   "changeFont": "Font Family",
   "fontSystem": "System",
   "fontMinecraft": "Minecraft",
-  "fontJetBrainsMono": "JetBrains Mono"
+  "fontJetBrainsMono": "JetBrains Mono",
+  "refresh": "Refresh",
+  "addServer": "Add Server"
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:is_mc_fk_running/l10n/app_localizations.dart';
+import 'dart:ui';
 
 class ServerDetailPage extends StatefulWidget {
   final Map<String, dynamic> serverItem;
@@ -51,80 +52,96 @@ class _ServerDetailPageState extends State<ServerDetailPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        title: Text(
-          widget.serverItem['name'] ?? l10n.serverDetails,
-          style: TextStyle(
-            fontFamily: Theme.of(context).textTheme.bodyMedium?.fontFamily,
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Theme.of(context).colorScheme.surface,
-              Theme.of(
-                context,
-              ).colorScheme.primaryContainer.withValues(alpha: 0.3),
-              Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 服务器基本信息卡片
-                _buildInfoCard(context, l10n),
-                const SizedBox(height: 24),
-
-                // 玩家人数折线图
-                _buildChartCard(
-                  context,
-                  title: l10n.playerCount,
-                  subtitle: l10n.last24Hours,
-                  data: _getPlayerCountData(),
-                  color: Colors.blue,
-                  unit: l10n.players,
-                  maxY: 70,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: ClipRRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: AppBar(
+              centerTitle: true,
+              elevation: 0,
+              backgroundColor: colorScheme.surface.withValues(alpha: 0.7),
+              title: Text(
+                widget.serverItem['name'] ?? l10n.serverDetails,
+                style: TextStyle(
+                  fontFamily: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.fontFamily,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 26,
+                  color: colorScheme.onSurface,
                 ),
-                const SizedBox(height: 24),
-                // 延迟折线图
-                _buildChartCard(
-                  context,
-                  title: l10n.pingLatency,
-                  subtitle: l10n.last24Hours,
-                  data: _getLatencyData(),
-                  color: Colors.green,
-                  unit: l10n.ms,
-                  maxY: 100,
+              ),
+              leading: IconButton(
+                icon: Icon(
+                  Icons.arrow_back_rounded,
+                  color: colorScheme.onSurface,
                 ),
-                const SizedBox(height: 24),
-              ],
+                onPressed: () => Navigator.of(context).pop(),
+              ),
             ),
           ),
         ),
+      ),
+      body: Stack(
+        children: [
+          // Background Gradient
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  colorScheme.surface,
+                  colorScheme.primaryContainer.withValues(alpha: 0.1),
+                  colorScheme.surface,
+                ],
+              ),
+            ),
+          ),
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 服务器基本信息卡片
+                  _buildInfoCard(context, l10n),
+                  const SizedBox(height: 24),
+
+                  // 玩家人数折线图
+                  _buildChartCard(
+                    context,
+                    title: l10n.playerCount,
+                    subtitle: l10n.last24Hours,
+                    data: _getPlayerCountData(),
+                    color: Colors.blue,
+                    unit: l10n.players,
+                    maxY: 70,
+                  ),
+                  const SizedBox(height: 24),
+                  // 延迟折线图
+                  _buildChartCard(
+                    context,
+                    title: l10n.pingLatency,
+                    subtitle: l10n.last24Hours,
+                    data: _getLatencyData(),
+                    color: Colors.green,
+                    unit: l10n.ms,
+                    maxY: 100,
+                  ),
+                  const SizedBox(height: 24),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

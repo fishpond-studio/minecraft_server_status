@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:is_mc_fk_running/l10n/app_localizations.dart';
+import 'dart:ui';
 
 class SponsorPage extends StatelessWidget {
   const SponsorPage({super.key});
@@ -13,34 +14,46 @@ class SponsorPage extends StatelessWidget {
 
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        centerTitle: true,
-        elevation: 0,
-        title: Text(
-          l10n.sponsor,
-          style: TextStyle(
-            fontFamily: theme.textTheme.bodyMedium?.fontFamily,
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
-            color: theme.colorScheme.primary,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: ClipRRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: AppBar(
+              centerTitle: true,
+              elevation: 0,
+              title: Text(
+                l10n.sponsor,
+                style: TextStyle(
+                  fontFamily: theme.textTheme.bodyMedium?.fontFamily,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 26,
+                  color: theme.colorScheme.onSurface,
+                ),
+              ),
+              backgroundColor: theme.colorScheme.surface.withValues(alpha: 0.7),
+              leading: IconButton(
+                icon: Icon(
+                  Icons.arrow_back_rounded,
+                  color: theme.colorScheme.onSurface,
+                ),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ),
           ),
-        ),
-        backgroundColor: Colors.transparent,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: theme.colorScheme.primary),
-          onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       body: Container(
-        height: MediaQuery.of(context).size.height,
+        width: double.infinity,
+        height: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
               theme.colorScheme.surface,
-              theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
-              theme.colorScheme.primary.withValues(alpha: 0.1),
+              theme.colorScheme.primaryContainer.withValues(alpha: 0.1),
+              theme.colorScheme.surface,
             ],
           ),
         ),

@@ -63,5 +63,7 @@
   "changeFont": "更换字体",
   "fontSystem": "系统默认",
   "fontMinecraft": "我的世界",
-  "fontJetBrainsMono": "JetBrains Mono"
+  "fontJetBrainsMono": "JetBrains Mono",
+  "refresh": "刷新",
+  "addServer": "添加服务器"
 }

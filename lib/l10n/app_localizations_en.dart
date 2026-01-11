@@ -180,4 +180,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fontJetBrainsMono => 'JetBrains Mono';
+
+  @override
+  String get refresh => 'Refresh';
+
+  @override
+  String get addServer => 'Add Server';
 }

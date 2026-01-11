@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:is_mc_fk_running/l10n/app_localizations.dart';
 import 'package:is_mc_fk_running/services/minecraft_server_status.dart';
 
@@ -17,7 +16,6 @@ class ServerInfoState extends State<ServerInfo> {
   late MinecraftServerStatus server;
   Map? info;
   DateTime? lastUpdated;
-  DateTime? updateSaveTime;
 
   @override
   void initState() {
@@ -41,21 +39,17 @@ class ServerInfoState extends State<ServerInfo> {
     }
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   Future<void> loadServerInfo() async {
     try {
-      info = await server.getServerStatus();
-      lastUpdated = DateTime.now();
+      final data = await server.getServerStatus();
+      if (!mounted) return;
+      setState(() {
+        info = data;
+        lastUpdated = DateTime.now();
+      });
     } catch (e) {
       if (!mounted) return;
       setState(() => info = {'online': false, 'error': e.toString()});
-    }
-    if (mounted) {
-      setState(() {});
     }
   }
 
@@ -63,142 +57,83 @@ class ServerInfoState extends State<ServerInfo> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Container(
       padding: const EdgeInsets.all(12),
-      color: theme.colorScheme.surface.withValues(alpha: 0.5),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 头部：图标 + 地址
+          // Version and Latency Bar
           Row(
             children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.dns,
-                  size: 20,
-                  color: theme.colorScheme.primary,
-                ),
+              _buildCompactBadge(
+                context,
+                Icons.bolt_rounded, //在这里写延迟！！！！
+                info != null && info!.containsKey('latency')
+                    ? '${info?['latency']}ms'
+                    : '--',
+                colorScheme.primary,
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  '${widget.host}:${widget.port}',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.onSurface,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
+              const SizedBox(width: 8),
+              _buildCompactBadge(
+                context, //在这里写版本！！！
+                Icons.terminal_rounded,
+                info?['version']?['name']?.toString().split(' ').last ?? '--',
+                colorScheme.secondary,
               ),
             ],
           ),
-
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Divider(
-              height: 1,
-              thickness: 1,
-              color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+          const Spacer(), //这里是中间那一大块空白
+          // World Name
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              info?['description'] ??
+                  (info?['online'] == false
+                      ? 'Server Offline'
+                      : l10n.notAvailable),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colorScheme.onSurface,
+                fontFamily: 'FMinecraft',
+                fontWeight: FontWeight.bold,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
+          const SizedBox(height: 12),
+          // Player Bar
+          _buildPlayerBar(context),
+        ],
+      ),
+    );
+  }
 
-          //版本、世界名称、延迟、最后更新时间
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildInfoRow(
-                  context,
-                  Icons.info_outline,
-                  l10n.version,
-                  info?['version']?['name'] ?? l10n.notAvailable,
-                ),
-                _buildInfoRow(
-                  context,
-                  Icons.map_outlined,
-                  l10n.worldName,
-                  info?['description'] ?? l10n.notAvailable,
-                ),
-                _buildInfoRow(
-                  context,
-                  Icons.timer_outlined,
-                  l10n.latency,
-                  info != null && info!.containsKey('latency')
-                      ? '${info?['latency']} ms'
-                      : l10n.notAvailable,
-                ),
-                _buildInfoRow(
-                  context,
-                  Icons.access_time,
-                  l10n.lastUpdated,
-                  lastUpdated != null
-                      ? DateFormat('HH:mm:ss').format(lastUpdated!)
-                      : l10n.notAvailable,
-                ),
-
-                // 玩家信息
-                Builder(
-                  builder: (context) {
-                    int online = 0;
-                    int max = 0;
-                    if (info != null && info?['players'] != null) {
-                      final players = info?['players'];
-                      if (players is Map) {
-                        online = players['online'] ?? 0;
-                        max = players['max'] ?? 8;
-                      }
-                    }
-                    if (max == 0) max = 8;
-
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // 玩家数量
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.people_outline,
-                                  size: 16,
-                                  color: theme.colorScheme.secondary,
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  l10n.onlinePlayers,
-                                  style: theme.textTheme.bodySmall,
-                                ),
-                              ],
-                            ),
-                            Text(
-                              '$online / $max',
-                              style: theme.textTheme.bodySmall,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        LinearProgressIndicator(
-                          value: online / max,
-                          minHeight: 6,
-                          borderRadius: BorderRadius.circular(3),
-                          backgroundColor:
-                              theme.colorScheme.surfaceContainerHighest,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            online / max > 0.9 ? Colors.red : Colors.green,
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ],
+  Widget _buildCompactBadge(
+    BuildContext context,
+    IconData icon,
+    String text,
+    Color color,
+  ) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainer,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 4),
+          Text(
+            text,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w900,
+              color: colorScheme.onSurface,
             ),
           ),
         ],
@@ -206,36 +141,60 @@ class ServerInfoState extends State<ServerInfo> {
     );
   }
 
-  Widget _buildInfoRow(
-    BuildContext context,
-    IconData icon,
-    String label,
-    String value,
-  ) {
-    return Row(
+  Widget _buildPlayerBar(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    int online = 0;
+    int max = 0;
+    if (info != null && info?['players'] != null) {
+      final players = info?['players'];
+      if (players is Map) {
+        online = players['online'] ?? 0;
+        max = players['max'] ?? 20;
+      }
+    }
+    if (max == 0) max = 20;
+    double progress = online / max;
+    if (progress > 1.0) progress = 1.0;
+
+    return Column(
       children: [
-        Icon(icon, size: 16, color: Theme.of(context).colorScheme.secondary),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // 标签文本
-              Text(
-                label,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.secondary,
-                ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              l10n.players,
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: colorScheme.onSurface,
+                fontWeight: FontWeight.bold,
               ),
-              Expanded(
-                child: Text(
-                  value,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.end,
-                ),
+            ),
+            Text(
+              '$online / $max',
+              style: theme.textTheme.labelMedium?.copyWith(
+                fontWeight: FontWeight.w900,
+                color: colorScheme.onSurface,
               ),
-            ],
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(4),
+          child: LinearProgressIndicator(
+            value: progress,
+            minHeight: 8,
+            backgroundColor: theme.colorScheme.surfaceContainerHighest
+                .withValues(alpha: 0.5),
+            valueColor: AlwaysStoppedAnimation<Color>(
+              progress > 0.8
+                  ? Colors.orange
+                  : (info?['online'] == false
+                        ? Colors.grey
+                        : Colors.greenAccent),
+            ),
           ),
         ),
       ],
