@@ -95,7 +95,8 @@ class _ServerCardState extends State<ServerCard>
                           children: [
                             Expanded(
                               child: Text(
-                                widget.item['name'],
+                                widget.item['name']?.toString() ??
+                                    'Unknown Server',
                                 style: theme.textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.w900,
                                   color: colorScheme.onSurface,
@@ -134,8 +135,9 @@ class _ServerCardState extends State<ServerCard>
                               borderRadius: BorderRadius.circular(16),
                               child: ServerInfo(
                                 key: _serverInfoKey,
-                                host: widget.item['address'],
-                                port: widget.item['port'],
+                                host: widget.item['address']?.toString() ?? '',
+                                port:
+                                    widget.item['port']?.toString() ?? '25565',
                               ),
                             ),
                           ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:is_mc_fk_running/l10n/app_localizations.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:is_mc_fk_running/data/database.dart';
+import 'package:is_mc_fk_running/services/data_collector.dart';
 import 'dart:ui';
 
 import '../widget/server_card.dart';
@@ -24,12 +25,27 @@ class _HomepageState extends State<Homepage>
 
   @override
   void initState() {
+    super.initState();
     if (_serverListBox.get("ITEMS") == null) {
       // 第一次打开显示欢迎页面 引导用户输入内容
     } else {
       db.loadData();
+      // 启动数据收集服务
+      _startDataCollection();
     }
-    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // 停止数据收集
+    DataCollectorService().stopAll();
+    super.dispose();
+  }
+
+  /// 启动数据收集服务
+  void _startDataCollection() {
+    // 为所有服务器启动数据收集（每5分钟收集一次）
+    DataCollectorService().startCollectingForAllServers(db.items);
   }
 
   void _addItem(Map<String, String> item) {
@@ -37,27 +53,69 @@ class _HomepageState extends State<Homepage>
       db.items.add(item);
     });
     db.updateDataBase();
+
+    // 为新添加的服务器启动数据收集
+    final address = item['address'];
+    final port = int.tryParse(item['port'] ?? '25565');
+    if (address != null && port != null) {
+      DataCollectorService().startCollecting(address: address, port: port);
+    }
   }
 
   void _removeItem(int index) {
+    final item = db.items[index];
     setState(() {
       db.items.removeAt(index);
     });
     db.updateDataBase();
+
+    // 停止已删除服务器的数据收集
+    final address = item['address'];
+    final port = int.tryParse(item['port'] ?? '25565');
+    if (address != null && port != null) {
+      DataCollectorService().stopCollecting(address, port);
+    }
   }
 
   void _updateItem(int index, Map<String, String> newItem) {
+    final oldItem = db.items[index];
     setState(() {
       db.items[index] = newItem;
     });
     db.updateDataBase();
+
+    // 如果地址或端口有变化，重启数据收集
+    final oldAddress = oldItem['address'];
+    final oldPort = int.tryParse(oldItem['port'] ?? '25565');
+    final newAddress = newItem['address'];
+    final newPort = int.tryParse(newItem['port'] ?? '25565');
+
+    if (oldAddress != newAddress || oldPort != newPort) {
+      // 停止旧的数据收集
+      if (oldAddress != null && oldPort != null) {
+        DataCollectorService().stopCollecting(oldAddress, oldPort);
+      }
+      // 启动新的数据收集
+      if (newAddress != null && newPort != null) {
+        DataCollectorService().startCollecting(
+          address: newAddress,
+          port: newPort,
+        );
+      }
+    }
   }
 
   /// 弹出输入框
   Future<void> _showAddDialog() async {
     final result = await showAddServerDialog(context);
     if (result != null) {
-      _addItem({...result});
+      // 确保所有值都是字符串
+      final newItem = {
+        'name': result['name']?.toString() ?? '',
+        'address': result['address']?.toString() ?? '',
+        'port': result['port']?.toString() ?? '25565',
+      };
+      _addItem(newItem);
     }
   }
 
@@ -68,17 +126,36 @@ class _HomepageState extends State<Homepage>
       if (result['delete'] == true) {
         _removeItem(index);
       } else {
-        _updateItem(index, {...item, ...result});
+        // 只保留服务器相关的字段，确保所有值都是字符串
+        final updatedItem = {
+          'name': result['name']?.toString() ?? item['name']?.toString() ?? '',
+          'address':
+              result['address']?.toString() ??
+              item['address']?.toString() ??
+              '',
+          'port':
+              result['port']?.toString() ?? item['port']?.toString() ?? '25565',
+        };
+        _updateItem(index, updatedItem);
       }
     }
   }
 
   Future<void> _handleRefresh() async {
-    setState(() {
-      db.loadData();
-    });
+    // 先检查 Hive 中是否有数据
+    final hasData = _serverListBox.get("ITEMS") != null;
+
+    if (hasData) {
+      setState(() {
+        db.loadData();
+      });
+    } else {
+      // 如果 Hive 中没有数据，保持当前状态
+      print('警告: Hive 中没有服务器数据');
+    }
+
     // Trigger refresh on all ServerCard children via some mechanism or just rebuild
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(milliseconds: 500));
   }
 
   @override

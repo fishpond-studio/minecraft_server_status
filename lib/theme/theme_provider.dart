@@ -7,6 +7,8 @@ class ThemeProvider with ChangeNotifier {
   static const String _localeTagKey = 'localeTag';
   static const String _isDarkModeKey = 'isDarkMode';
   static const String _fontFamilyKey = 'fontFamily';
+  static const String _updateIntervalKey = 'updateInterval';
+  static const String _saveIntervalKey = 'saveInterval';
 
   // 主题颜色映射
   final Map<String, Color> _colorMap = {
@@ -33,6 +35,8 @@ class ThemeProvider with ChangeNotifier {
   String? _localeTag;
   bool _isDarkMode = false;
   String _currentFontFamily = 'FMinecraft';
+  int _updateInterval = 60; // 默认 60 秒
+  int _saveInterval = 300; // 默认 300 秒
 
   ThemeProvider() {
     // 从Hive加载保存的主题颜色
@@ -56,6 +60,16 @@ class ThemeProvider with ChangeNotifier {
         _availableFonts.contains(savedFontFamily)) {
       _currentFontFamily = savedFontFamily;
     }
+
+    final savedUpdateInterval = _settingsBox.get(_updateIntervalKey);
+    if (savedUpdateInterval is int) {
+      _updateInterval = savedUpdateInterval;
+    }
+
+    final savedSaveInterval = _settingsBox.get(_saveIntervalKey);
+    if (savedSaveInterval is int) {
+      _saveInterval = savedSaveInterval;
+    }
   }
 
   Color get currentColor => _colorMap[_currentColorName]!;
@@ -73,6 +87,10 @@ class ThemeProvider with ChangeNotifier {
   String get currentFontFamily => _currentFontFamily;
 
   List<String> get availableFonts => _availableFonts;
+
+  int get updateInterval => _updateInterval;
+
+  int get saveInterval => _saveInterval;
 
   ThemeData get theme => getTheme();
 
@@ -108,6 +126,18 @@ class ThemeProvider with ChangeNotifier {
       _settingsBox.put(_fontFamilyKey, fontFamily);
       notifyListeners();
     }
+  }
+
+  void changeUpdateInterval(int interval) {
+    _updateInterval = interval;
+    _settingsBox.put(_updateIntervalKey, interval);
+    notifyListeners();
+  }
+
+  void changeSaveInterval(int interval) {
+    _saveInterval = interval;
+    _settingsBox.put(_saveIntervalKey, interval);
+    notifyListeners();
   }
 
   ThemeData getTheme() {

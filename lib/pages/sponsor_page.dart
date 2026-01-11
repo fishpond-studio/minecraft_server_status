@@ -1,10 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:is_mc_fk_running/l10n/app_localizations.dart';
+import 'package:hive/hive.dart';
 import 'dart:ui';
 
-class SponsorPage extends StatelessWidget {
+class SponsorPage extends StatefulWidget {
   const SponsorPage({super.key});
+
+  @override
+  State<SponsorPage> createState() => _SponsorPageState();
+}
+
+class _SponsorPageState extends State<SponsorPage> {
+  late Box _settingsBox;
+  bool _developerMode = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _settingsBox = Hive.box('serverListBox'); // 使用现有的 box
+    _loadDeveloperMode();
+  }
+
+  void _loadDeveloperMode() {
+    setState(() {
+      _developerMode = _settingsBox.get('developerMode', defaultValue: false);
+    });
+  }
+
+  void _toggleDeveloperMode(bool value) {
+    setState(() {
+      _developerMode = value;
+      _settingsBox.put('developerMode', value);
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          value
+              ? 'Developer mode enabled! Check settings for developer options.'
+              : 'Developer mode disabled.',
+        ),
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -126,6 +167,9 @@ class SponsorPage extends StatelessWidget {
                     icon: Icons.send_outlined, // 图标
                     isLink: true, // 标记为链接格式
                   ),
+                  const SizedBox(height: 24),
+                  // 开发者模式开关（仅英文版）
+                  _buildDeveloperModeToggle(context, theme),
                 ],
               ],
             ),
@@ -366,6 +410,97 @@ class SponsorPage extends StatelessWidget {
                               color: Colors.black87,
                             ),
                           ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDeveloperModeToggle(BuildContext context, ThemeData theme) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            theme.colorScheme.tertiaryContainer.withValues(alpha: 0.3),
+            theme.colorScheme.tertiaryContainer.withValues(alpha: 0.1),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: theme.colorScheme.outline.withValues(alpha: 0.2),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: theme.shadowColor.withValues(alpha: 0.1),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: Material(
+          color: Colors.transparent,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: _developerMode
+                        ? theme.colorScheme.primary.withValues(alpha: 0.2)
+                        : theme.colorScheme.surfaceContainerHighest.withValues(
+                            alpha: 0.3,
+                          ),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.developer_mode,
+                    color: _developerMode
+                        ? theme.colorScheme.primary
+                        : theme.colorScheme.onSurfaceVariant,
+                    size: 28,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Developer Mode',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.onSurface,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Enable developer options in settings',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Transform.scale(
+                  scale: 0.9,
+                  child: Switch(
+                    value: _developerMode,
+                    onChanged: _toggleDeveloperMode,
+                    activeColor: theme.colorScheme.primary,
                   ),
                 ),
               ],

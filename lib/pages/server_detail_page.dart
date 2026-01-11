@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:is_mc_fk_running/l10n/app_localizations.dart';
+import 'package:is_mc_fk_running/services/minecraft_server_status.dart';
+import 'package:hive/hive.dart';
 import 'dart:ui';
 
 class ServerDetailPage extends StatefulWidget {
@@ -13,40 +15,110 @@ class ServerDetailPage extends StatefulWidget {
 }
 
 class _ServerDetailPageState extends State<ServerDetailPage> {
-  // TODO: 玩家人数数据 - 请接入真实数据源
-  // 数据格式: List<FlSpot>，其中 FlSpot(x, y)
-  //   - x: 时间点（0-23 表示24小时）
-  //   - y: 玩家数量
-  // 示例: [FlSpot(0, 10), FlSpot(1, 15), FlSpot(2, 12), ...]
-  // 可以从数据库、API或本地存储获取历史数据
-  List<FlSpot> _getPlayerCountData() {
-    // 返回空数据，等待接入真实数据
-    return [];
+  late MinecraftServerStatus _serverService;
+  Map<String, dynamic>? _currentStatus;
+  bool _isLoading = true;
 
-    // 接入真实数据示例（取消注释并修改）:
-    // return widget.serverItem['playerHistory']
-    //     ?.asMap()
-    //     .entries
-    //     .map((entry) => FlSpot(entry.key.toDouble(), entry.value.toDouble()))
-    //     .toList() ?? [];
+  @override
+  void initState() {
+    super.initState();
+    _serverService = MinecraftServerStatus(
+      host: widget.serverItem['address'],
+      port: int.parse(widget.serverItem['port'].toString()),
+    );
+    _fetchStatus();
   }
 
-  // TODO: 延迟数据 - 请接入真实数据源
-  // 数据格式: List<FlSpot>，其中 FlSpot(x, y)
-  //   - x: 时间点（0-23 表示24小时）
-  //   - y: 延迟时间（毫秒）
-  // 示例: [FlSpot(0, 15), FlSpot(1, 18), FlSpot(2, 12), ...]
-  // 可以定期ping服务器并记录响应时间
-  List<FlSpot> _getLatencyData() {
-    // 返回空数据，等待接入真实数据
-    return [];
+  Future<void> _fetchStatus() async {
+    try {
+      final status = await _serverService.getServerStatus();
+      if (mounted) {
+        setState(() {
+          _currentStatus = status;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _currentStatus = {'online': false};
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
-    // 接入真实数据示例（取消注释并修改）:
-    // return widget.serverItem['latencyHistory']
-    //     ?.asMap()
-    //     .entries
-    //     .map((entry) => FlSpot(entry.key.toDouble(), entry.value.toDouble()))
-    //     .toList() ?? [];
+  // 从 Hive 获取历史数据并转换为图表坐标点
+  List<FlSpot> _getPlayerCountData() {
+    final box = Hive.box('serverListBox');
+    final historyKey =
+        'history_${widget.serverItem['address']}_${widget.serverItem['port']}';
+    List history = box.get(historyKey, defaultValue: []);
+
+    if (history.isEmpty) return [];
+
+    // 将最近 24 小时的数据点映射到 0-23 的 X 轴（简单线性映射）
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final dayAgo = now - 24 * 60 * 60 * 1000;
+
+    return history.where((e) => e['timestamp'] > dayAgo).map((e) {
+      double x = (e['timestamp'] - dayAgo) / (24 * 60 * 60 * 1000) * 23;
+      return FlSpot(x, (e['players'] as num).toDouble());
+    }).toList();
+  }
+
+  // 从 Hive 获取延迟历史数据
+  List<FlSpot> _getLatencyData() {
+    final box = Hive.box('serverListBox');
+    final historyKey =
+        'history_${widget.serverItem['address']}_${widget.serverItem['port']}';
+    List history = box.get(historyKey, defaultValue: []);
+
+    if (history.isEmpty) return [];
+
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final dayAgo = now - 24 * 60 * 60 * 1000;
+
+    return history.where((e) => e['timestamp'] > dayAgo).map((e) {
+      double x = (e['timestamp'] - dayAgo) / (24 * 60 * 60 * 1000) * 23;
+      return FlSpot(x, (e['latency'] as num).toDouble());
+    }).toList();
+  }
+
+  // 计算玩家数据的最大值，用于动态调整Y轴
+  double _getMaxPlayerCount() {
+    final data = _getPlayerCountData();
+    if (data.isEmpty) return 10; // 默认最小值为10
+
+    // 找出最大玩家数
+    double maxPlayers = data
+        .map((spot) => spot.y)
+        .reduce((a, b) => a > b ? a : b);
+
+    // 向上取整到最近的10的倍数，并添加20%的缓冲空间
+    double buffer = maxPlayers * 0.2;
+    double maxY = ((maxPlayers + buffer) / 10).ceil() * 10;
+
+    // 确保最小为10
+    return maxY < 10 ? 10 : maxY;
+  }
+
+  // 计算延迟数据的最大值，用于动态调整Y轴
+  double _getMaxLatency() {
+    final data = _getLatencyData();
+    if (data.isEmpty) return 100; // 默认最小值为100ms
+
+    // 找出最大延迟
+    double maxLatency = data
+        .map((spot) => spot.y)
+        .reduce((a, b) => a > b ? a : b);
+
+    // 向上取整到最近的50的倍数，并添加20%的缓冲空间
+    double buffer = maxLatency * 0.2;
+    double maxY = ((maxLatency + buffer) / 50).ceil() * 50;
+
+    // 确保最小为100ms
+    return maxY < 100 ? 100 : maxY;
   }
 
   @override
@@ -112,7 +184,9 @@ class _ServerDetailPageState extends State<ServerDetailPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // 服务器基本信息卡片
-                  _buildInfoCard(context, l10n),
+                  _isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : _buildInfoCard(context, l10n),
                   const SizedBox(height: 24),
 
                   // 玩家人数折线图
@@ -123,7 +197,7 @@ class _ServerDetailPageState extends State<ServerDetailPage> {
                     data: _getPlayerCountData(),
                     color: Colors.blue,
                     unit: l10n.players,
-                    maxY: 70,
+                    maxY: _getMaxPlayerCount(), // 动态调整Y轴最大值
                   ),
                   const SizedBox(height: 24),
                   // 延迟折线图
@@ -134,7 +208,7 @@ class _ServerDetailPageState extends State<ServerDetailPage> {
                     data: _getLatencyData(),
                     color: Colors.green,
                     unit: l10n.ms,
-                    maxY: 100,
+                    maxY: _getMaxLatency(), // 动态调整Y轴最大值
                   ),
                   const SizedBox(height: 24),
                 ],
@@ -188,21 +262,21 @@ class _ServerDetailPageState extends State<ServerDetailPage> {
           _buildInfoRow(
             context,
             l10n.nameLabel,
-            widget.serverItem['name'] ?? 'N/A',
+            widget.serverItem['name']?.toString() ?? 'N/A',
           ),
           //服务器版本
           const SizedBox(height: 8),
           _buildInfoRow(
             context,
             l10n.version,
-            widget.serverItem['version'] ?? 'N/A',
+            _currentStatus?['version']?['name']?.toString() ?? 'N/A',
           ),
           //服务器地址
           const SizedBox(height: 8),
           _buildInfoRow(
             context,
             l10n.addressLabel,
-            widget.serverItem['address'] ?? 'N/A',
+            widget.serverItem['address']?.toString() ?? 'N/A',
           ),
           //服务器端口
           const SizedBox(height: 8),
@@ -216,8 +290,8 @@ class _ServerDetailPageState extends State<ServerDetailPage> {
           _buildInfoRow(
             context,
             'Status',
-            widget.serverItem['running'] == true ? 'Online' : 'Offline',
-            valueColor: widget.serverItem['running'] == true
+            _currentStatus?['online'] != false ? 'Online' : 'Offline',
+            valueColor: _currentStatus?['online'] != false
                 ? Colors.green
                 : Colors.red,
           ),
