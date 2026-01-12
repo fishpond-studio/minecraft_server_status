@@ -1,6 +1,6 @@
 {
   "@@locale": "zh",
-  "appTitle": "Is MC FK Running?",
+  "appTitle": "MC Sentinel",
   "home": "主页",
   "settings": "设置",
   "servers": "服务器",
@@ -57,5 +57,13 @@
   "joinCommunity": "加入社区",
   "communityName": "群组名称",
   "communityId": "群号/链接",
-  "copy": "复制"
+  "copy": "复制",
+  "updateTime": "更新时间",
+  "updateSaveTime": "更新保存时间",
+  "changeFont": "更换字体",
+  "fontSystem": "系统默认",
+  "fontMinecraft": "我的世界",
+  "fontJetBrainsMono": "JetBrains Mono",
+  "refresh": "刷新",
+  "addServer": "添加服务器"
 }

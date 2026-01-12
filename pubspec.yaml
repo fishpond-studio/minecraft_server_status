@@ -1,5 +1,5 @@
-name: is_mc_fk_running
-description: "A new Flutter project."
+name: mc_sentinel
+description: "MC Sentinel - Minecraft 服务器状态监控应用"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -36,7 +36,6 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   provider: ^6.1.2
-  shadcn_ui: ^0.43.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -78,6 +77,9 @@ flutter:
     - family: FMinecraft
       fonts:
         - asset: lib/fonts/5_Minecraft AE.ttf
+    - family: FJetBrainsMono
+      fonts:
+        - asset: lib/fonts/JetBrainsMonoNL-Regular.ttf
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

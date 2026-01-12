@@ -143,7 +143,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get sponsorBenefitsTitle => '赞助后可以得到什么?';
 
   @override
-  String get sponsorBenefit1 => '1. 你的名字将被放在应用的赞助列表中(其实没有)';
+  String get sponsorBenefit1 => '1. 你的名字将被放在应用的赞助列表中';
 
   @override
   String get sponsorBenefit2 => '2. 将会得到IDK的抱抱~~';
@@ -162,4 +162,28 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get copy => '复制';
+
+  @override
+  String get updateTime => '更新时间';
+
+  @override
+  String get updateSaveTime => '更新保存时间';
+
+  @override
+  String get changeFont => '更换字体';
+
+  @override
+  String get fontSystem => '系统默认';
+
+  @override
+  String get fontMinecraft => '我的世界';
+
+  @override
+  String get fontJetBrainsMono => 'JetBrains Mono';
+
+  @override
+  String get refresh => '刷新';
+
+  @override
+  String get addServer => '添加服务器';
 }

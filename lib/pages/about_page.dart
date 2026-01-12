@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:is_mc_fk_running/l10n/app_localizations.dart';
+import 'package:mc_sentinel/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:ui';
 
 class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
@@ -27,30 +28,44 @@ class AboutPage extends StatelessWidget {
 
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: theme.colorScheme.primary),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text(
-          l10n.about,
-          style: TextStyle(
-            color: theme.colorScheme.primary,
-            fontWeight: FontWeight.bold,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: ClipRRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: AppBar(
+              backgroundColor: theme.colorScheme.surface.withValues(alpha: 0.7),
+              elevation: 0,
+              leading: IconButton(
+                icon: Icon(
+                  Icons.arrow_back_rounded,
+                  color: theme.colorScheme.onSurface,
+                ),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              title: Text(
+                l10n.about,
+                style: TextStyle(
+                  color: theme.colorScheme.onSurface,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 26,
+                ),
+              ),
+            ),
           ),
         ),
       ),
       body: Container(
+        width: double.infinity,
+        height: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
               theme.colorScheme.surface,
-              theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
-              theme.colorScheme.primary.withValues(alpha: 0.1),
+              theme.colorScheme.primaryContainer.withValues(alpha: 0.1),
+              theme.colorScheme.surface,
             ],
           ),
         ),

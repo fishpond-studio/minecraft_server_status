@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:is_mc_fk_running/l10n/app_localizations.dart';
+import 'package:mc_sentinel/l10n/app_localizations.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:is_mc_fk_running/data/database.dart';
+import 'package:mc_sentinel/data/database.dart';
+import 'package:mc_sentinel/services/data_collector.dart';
+import 'dart:ui';
 
 import '../widget/server_card.dart';
 import '../widget/add_server_dialog.dart';
@@ -23,14 +25,27 @@ class _HomepageState extends State<Homepage>
 
   @override
   void initState() {
+    super.initState();
     if (_serverListBox.get("ITEMS") == null) {
       // 第一次打开显示欢迎页面 引导用户输入内容
-
-      // 转到欢迎页面
     } else {
       db.loadData();
+      // 启动数据收集服务
+      _startDataCollection();
     }
-    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // 停止数据收集
+    DataCollectorService().stopAll();
+    super.dispose();
+  }
+
+  /// 启动数据收集服务
+  void _startDataCollection() {
+    // 为所有服务器启动数据收集（每5分钟收集一次）
+    DataCollectorService().startCollectingForAllServers(db.items);
   }
 
   void _addItem(Map<String, String> item) {
@@ -38,28 +53,69 @@ class _HomepageState extends State<Homepage>
       db.items.add(item);
     });
     db.updateDataBase();
+
+    // 为新添加的服务器启动数据收集
+    final address = item['address'];
+    final port = int.tryParse(item['port'] ?? '25565');
+    if (address != null && port != null) {
+      DataCollectorService().startCollecting(address: address, port: port);
+    }
   }
 
   void _removeItem(int index) {
+    final item = db.items[index];
     setState(() {
       db.items.removeAt(index);
     });
     db.updateDataBase();
+
+    // 停止已删除服务器的数据收集
+    final address = item['address'];
+    final port = int.tryParse(item['port'] ?? '25565');
+    if (address != null && port != null) {
+      DataCollectorService().stopCollecting(address, port);
+    }
   }
 
   void _updateItem(int index, Map<String, String> newItem) {
+    final oldItem = db.items[index];
     setState(() {
       db.items[index] = newItem;
     });
     db.updateDataBase();
+
+    // 如果地址或端口有变化，重启数据收集
+    final oldAddress = oldItem['address'];
+    final oldPort = int.tryParse(oldItem['port'] ?? '25565');
+    final newAddress = newItem['address'];
+    final newPort = int.tryParse(newItem['port'] ?? '25565');
+
+    if (oldAddress != newAddress || oldPort != newPort) {
+      // 停止旧的数据收集
+      if (oldAddress != null && oldPort != null) {
+        DataCollectorService().stopCollecting(oldAddress, oldPort);
+      }
+      // 启动新的数据收集
+      if (newAddress != null && newPort != null) {
+        DataCollectorService().startCollecting(
+          address: newAddress,
+          port: newPort,
+        );
+      }
+    }
   }
 
   /// 弹出输入框
   Future<void> _showAddDialog() async {
-    // 弹出对话框 等待输入
     final result = await showAddServerDialog(context);
     if (result != null) {
-      _addItem({...result});
+      // 确保所有值都是字符串
+      final newItem = {
+        'name': result['name']?.toString() ?? '',
+        'address': result['address']?.toString() ?? '',
+        'port': result['port']?.toString() ?? '25565',
+      };
+      _addItem(newItem);
     }
   }
 
@@ -70,81 +126,269 @@ class _HomepageState extends State<Homepage>
       if (result['delete'] == true) {
         _removeItem(index);
       } else {
-        _updateItem(index, {...item, ...result});
+        // 只保留服务器相关的字段，确保所有值都是字符串
+        final updatedItem = {
+          'name': result['name']?.toString() ?? item['name']?.toString() ?? '',
+          'address':
+              result['address']?.toString() ??
+              item['address']?.toString() ??
+              '',
+          'port':
+              result['port']?.toString() ?? item['port']?.toString() ?? '25565',
+        };
+        _updateItem(index, updatedItem);
       }
     }
   }
 
+  Future<void> _handleRefresh() async {
+    // 先检查 Hive 中是否有数据
+    final hasData = _serverListBox.get("ITEMS") != null;
+
+    if (hasData) {
+      setState(() {
+        db.loadData();
+      });
+    } else {
+      // 如果 Hive 中没有数据，保持当前状态
+      print('警告: Hive 中没有服务器数据');
+    }
+
+    // Trigger refresh on all ServerCard children via some mechanism or just rebuild
+    await Future.delayed(const Duration(milliseconds: 500));
+  }
+
+  Widget _buildModernRefreshButton(
+    ColorScheme colorScheme,
+    AppLocalizations l10n,
+  ) {
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(20),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        onTap: _handleRefresh,
+        child: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: colorScheme.primaryContainer.withValues(alpha: 0.3),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: colorScheme.primary.withValues(alpha: 0.2),
+              width: 1,
+            ),
+          ),
+          child: Center(
+            child: Icon(
+              Icons.refresh_rounded,
+              size: 20,
+              color: colorScheme.primary,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    super.build(context); // 必须调用super.build(context)
+    super.build(context);
     final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      extendBodyBehindAppBar: true, // Allow body to extend behind AppBar
-      appBar: AppBar(
-        centerTitle: true,
-        elevation: 0,
-        title: Text(
-          l10n.servers,
-          style: TextStyle(
-            fontFamily: Theme.of(context).textTheme.bodyMedium?.fontFamily,
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
-            color: Theme.of(context).colorScheme.primary,
+      extendBodyBehindAppBar: true,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(120), // 增加高度以容纳 SafeArea
+        child: SafeArea(
+          child: Container(
+            margin: const EdgeInsets.only(top: 10, left: 20, right: 20),
+            height: 60,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(30),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        colorScheme.surface.withValues(alpha: 0.8),
+                        colorScheme.surfaceContainerHighest.withValues(
+                          alpha: 0.6,
+                        ),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(
+                      color: colorScheme.outline.withValues(alpha: 0.15),
+                      width: 1.5,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: colorScheme.shadow.withValues(alpha: 0.1),
+                        blurRadius: 20,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // 左侧装饰点
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: colorScheme.primary,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: colorScheme.primary.withValues(
+                                  alpha: 0.5,
+                                ),
+                                blurRadius: 8,
+                                spreadRadius: 2,
+                              ),
+                            ],
+                          ),
+                        ),
+                        // 标题
+                        Expanded(
+                          child: Center(
+                            child: Text(
+                              l10n.servers,
+                              style: TextStyle(
+                                fontFamily: Theme.of(
+                                  context,
+                                ).textTheme.bodyMedium?.fontFamily,
+                                fontWeight: FontWeight.w900,
+                                fontSize: 20,
+                                color: colorScheme.onSurface,
+                                letterSpacing: 1.0,
+                              ),
+                            ),
+                          ),
+                        ),
+                        // 刷新按钮
+                        _buildModernRefreshButton(colorScheme, l10n),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
         ),
-        actions: [
-          // IconButton(onPressed: null, icon: const Icon(Icons.cached, size: 20)),
-          IconButton(onPressed: null, icon: const Icon(Icons.cached, size: 20)),
-        ],
-        backgroundColor: Colors.transparent, // Transparent to show gradient
       ),
-
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Theme.of(context).colorScheme.surface,
-              Theme.of(
-                context,
-              ).colorScheme.primaryContainer.withValues(alpha: 0.3),
-              Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+      body: Stack(
+        children: [
+          // Background Gradient
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  colorScheme.surface,
+                  colorScheme.primaryContainer.withValues(alpha: 0.1),
+                  colorScheme.surface,
+                ],
+              ),
+            ),
+          ),
+          // Subtle Pattern or shapes
+          Positioned(
+            top: -100,
+            right: -100,
+            child: Container(
+              width: 300,
+              height: 300,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: colorScheme.primary.withValues(alpha: 0.05),
+              ),
+            ),
+          ),
+          SafeArea(
+            bottom: false,
+            child: GridView.builder(
+              padding: const EdgeInsets.fromLTRB(
+                20,
+                16,
+                20,
+                110, // 增加底部间距，为浮动导航栏留出空间
+              ),
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 500,
+                mainAxisSpacing: 20,
+                crossAxisSpacing: 20,
+                childAspectRatio: 1.4,
+              ),
+              itemCount: db.items.length,
+              itemBuilder: (context, index) {
+                return ServerCard(
+                  item: db.items[index],
+                  onEdit: () => _showEditDialog(index, db.items[index]),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 110),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: colorScheme.shadow.withValues(alpha: 0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
             ],
           ),
-        ),
-        child: SafeArea(
-          // Use SafeArea to avoid overlap with system UI
-          child: GridView.builder(
-            padding: const EdgeInsets.all(16),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 1, // 每行两列
-              crossAxisSpacing: 16, // 列间距
-              mainAxisSpacing: 16, // 行间距
-              childAspectRatio: 0.75, // 宽高比，根据 ServerCard 调整
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: FloatingActionButton.extended(
+                backgroundColor: colorScheme.primary.withValues(alpha: 0.7),
+                elevation: 0,
+                focusElevation: 0,
+                hoverElevation: 0,
+                highlightElevation: 0,
+                onPressed: _showAddDialog,
+                icon: const Icon(
+                  Icons.add_rounded,
+                  size: 24,
+                  color: Colors.white,
+                ),
+                label: Text(
+                  l10n.addServer,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: BorderSide(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    width: 1,
+                  ),
+                ),
+              ),
             ),
-            itemCount: db.items.length,
-            itemBuilder: (context, index) {
-              return ServerCard(
-                item: db.items[index],
-                onEdit: () => _showEditDialog(index, db.items[index]),
-              );
-            },
           ),
         ),
-      ),
-
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Theme.of(context).primaryColor,
-        elevation: 0.5,
-        focusElevation: 2,
-        hoverElevation: 2,
-        onPressed: _showAddDialog,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25), // 圆角大小
-        ),
-        child: const Icon(Icons.add, size: 30, color: Colors.white),
       ),
     );
   }

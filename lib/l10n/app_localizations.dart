@@ -400,6 +400,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Copy'**
   String get copy;
+
+  /// No description provided for @updateTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Time'**
+  String get updateTime;
+
+  /// No description provided for @updateSaveTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Save Time'**
+  String get updateSaveTime;
+
+  /// No description provided for @changeFont.
+  ///
+  /// In en, this message translates to:
+  /// **'Font Family'**
+  String get changeFont;
+
+  /// No description provided for @fontSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get fontSystem;
+
+  /// No description provided for @fontMinecraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Minecraft'**
+  String get fontMinecraft;
+
+  /// No description provided for @fontJetBrainsMono.
+  ///
+  /// In en, this message translates to:
+  /// **'JetBrains Mono'**
+  String get fontJetBrainsMono;
+
+  /// No description provided for @refresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get refresh;
+
+  /// No description provided for @addServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Server'**
+  String get addServer;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

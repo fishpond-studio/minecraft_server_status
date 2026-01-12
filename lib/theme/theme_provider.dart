@@ -6,6 +6,9 @@ class ThemeProvider with ChangeNotifier {
   static const String _themeColorKey = 'themeColor';
   static const String _localeTagKey = 'localeTag';
   static const String _isDarkModeKey = 'isDarkMode';
+  static const String _fontFamilyKey = 'fontFamily';
+  static const String _updateIntervalKey = 'updateInterval';
+  static const String _saveIntervalKey = 'saveInterval';
 
   // 主题颜色映射
   final Map<String, Color> _colorMap = {
@@ -21,9 +24,19 @@ class ThemeProvider with ChangeNotifier {
     'Grey': const Color.fromARGB(210, 96, 125, 139),
   };
 
+  // 可用字体列表
+  final List<String> _availableFonts = [
+    'System',
+    'FMinecraft',
+    'FJetBrainsMono',
+  ];
+
   String _currentColorName = 'Blue';
   String? _localeTag;
   bool _isDarkMode = false;
+  String _currentFontFamily = 'FMinecraft';
+  int _updateInterval = 60; // 默认 60 秒
+  int _saveInterval = 300; // 默认 300 秒
 
   ThemeProvider() {
     // 从Hive加载保存的主题颜色
@@ -41,6 +54,22 @@ class ThemeProvider with ChangeNotifier {
     if (savedIsDarkMode is bool) {
       _isDarkMode = savedIsDarkMode;
     }
+
+    final savedFontFamily = _settingsBox.get(_fontFamilyKey);
+    if (savedFontFamily is String &&
+        _availableFonts.contains(savedFontFamily)) {
+      _currentFontFamily = savedFontFamily;
+    }
+
+    final savedUpdateInterval = _settingsBox.get(_updateIntervalKey);
+    if (savedUpdateInterval is int) {
+      _updateInterval = savedUpdateInterval;
+    }
+
+    final savedSaveInterval = _settingsBox.get(_saveIntervalKey);
+    if (savedSaveInterval is int) {
+      _saveInterval = savedSaveInterval;
+    }
   }
 
   Color get currentColor => _colorMap[_currentColorName]!;
@@ -54,6 +83,14 @@ class ThemeProvider with ChangeNotifier {
   String get currentLocaleTag => _localeTag ?? 'system';
 
   bool get isDarkMode => _isDarkMode;
+
+  String get currentFontFamily => _currentFontFamily;
+
+  List<String> get availableFonts => _availableFonts;
+
+  int get updateInterval => _updateInterval;
+
+  int get saveInterval => _saveInterval;
 
   ThemeData get theme => getTheme();
 
@@ -83,13 +120,35 @@ class ThemeProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void changeFontFamily(String fontFamily) {
+    if (_availableFonts.contains(fontFamily)) {
+      _currentFontFamily = fontFamily;
+      _settingsBox.put(_fontFamilyKey, fontFamily);
+      notifyListeners();
+    }
+  }
+
+  void changeUpdateInterval(int interval) {
+    _updateInterval = interval;
+    _settingsBox.put(_updateIntervalKey, interval);
+    notifyListeners();
+  }
+
+  void changeSaveInterval(int interval) {
+    _saveInterval = interval;
+    _settingsBox.put(_saveIntervalKey, interval);
+    notifyListeners();
+  }
+
   ThemeData getTheme() {
+    // Ensure the color is fully opaque for the seed to work best with Material 3
+    final seedColor = currentColor.withValues(alpha: 1.0);
+
     return ThemeData(
-      fontFamily: 'FMinecraft',
+      fontFamily: _currentFontFamily == 'System' ? null : _currentFontFamily,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: currentColor,
+        seedColor: seedColor,
         brightness: _isDarkMode ? Brightness.dark : Brightness.light,
-        primary: currentColor.withValues(alpha: 0.5),
       ),
       useMaterial3: true,
     );

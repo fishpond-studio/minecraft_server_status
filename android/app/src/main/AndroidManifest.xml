@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="is_mc_fk_running"
+        android:label="MC Sentinel"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

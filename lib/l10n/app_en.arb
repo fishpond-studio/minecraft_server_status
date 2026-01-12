@@ -1,6 +1,6 @@
 {
   "@@locale": "en",
-  "appTitle": "Is MC FK Running?",
+  "appTitle": "MC Sentinel",
   "home": "Home",
   "settings": "Settings",
   "servers": "Servers",
@@ -57,5 +57,13 @@
   "joinCommunity": "Join Community",
   "communityName": "Group Name",
   "communityId": "Group ID/Link",
-  "copy": "Copy"
+  "copy": "Copy",
+  "updateTime": "Update Time",
+  "updateSaveTime": "Update Save Time",
+  "changeFont": "Font Family",
+  "fontSystem": "System",
+  "fontMinecraft": "Minecraft",
+  "fontJetBrainsMono": "JetBrains Mono",
+  "refresh": "Refresh",
+  "addServer": "Add Server"
 }

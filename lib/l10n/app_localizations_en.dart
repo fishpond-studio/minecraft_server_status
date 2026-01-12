@@ -143,15 +143,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sponsorBenefitsTitle => 'What do you get for sponsoring?';
 
   @override
-  String get sponsorBenefit1 =>
-      '1. Your name will be listed in the sponsor list(Actually there is no sponsor list)';
+  String get sponsorBenefit1 => '1. Your name will be listed in the sponsor list';
 
   @override
   String get sponsorBenefit2 => '2. You get a hug from IDK~~';
 
   @override
-  String get sponsorNote =>
-      'Don\'t sponsor! It\'s just a practice project. Come hang out in our community instead!';
+  String get sponsorNote => 'Don\'t sponsor! It\'s just a practice project. Come hang out in our community instead!';
 
   @override
   String get joinCommunity => 'Join Community';
@@ -164,4 +162,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get copy => 'Copy';
+
+  @override
+  String get updateTime => 'Update Time';
+
+  @override
+  String get updateSaveTime => 'Update Save Time';
+
+  @override
+  String get changeFont => 'Font Family';
+
+  @override
+  String get fontSystem => 'System';
+
+  @override
+  String get fontMinecraft => 'Minecraft';
+
+  @override
+  String get fontJetBrainsMono => 'JetBrains Mono';
+
+  @override
+  String get refresh => 'Refresh';
+
+  @override
+  String get addServer => 'Add Server';
 }
