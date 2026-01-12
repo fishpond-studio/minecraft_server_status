@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:is_mc_fk_running/l10n/app_localizations.dart';
+import 'package:mc_sentinel/l10n/app_localizations.dart';
 import 'package:hive/hive.dart';
 import 'dart:ui';
 

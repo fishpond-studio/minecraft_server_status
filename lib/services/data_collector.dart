@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:hive/hive.dart';
-import 'package:is_mc_fk_running/services/minecraft_server_status.dart';
+import 'package:mc_sentinel/services/minecraft_server_status.dart';
 
 /// 数据收集服务
 /// 负责定期收集服务器状态并保存到 Hive 数据库

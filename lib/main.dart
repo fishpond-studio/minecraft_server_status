@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:is_mc_fk_running/l10n/app_localizations.dart';
+import 'package:mc_sentinel/l10n/app_localizations.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 import 'pages/routes_pages.dart';
@@ -26,7 +26,8 @@ class MyApp extends StatelessWidget {
         builder: (context, themeProvider, child) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
+            onGenerateTitle: (context) =>
+                AppLocalizations.of(context)!.appTitle,
             theme: themeProvider.getTheme(), // 应用主题
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,

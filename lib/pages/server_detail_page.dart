@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:is_mc_fk_running/l10n/app_localizations.dart';
-import 'package:is_mc_fk_running/services/minecraft_server_status.dart';
+import 'package:mc_sentinel/l10n/app_localizations.dart';
+import 'package:mc_sentinel/services/minecraft_server_status.dart';
 import 'package:hive/hive.dart';
 import 'dart:ui';
 import 'dart:async';
@@ -315,6 +315,20 @@ class _ServerDetailPageState extends State<ServerDetailPage> {
                 ? Colors.green
                 : Colors.red,
           ),
+          if (_currentStatus?['online'] != false &&
+              _currentStatus?['latency'] != null) ...[
+            const SizedBox(height: 8),
+            _buildInfoRow(
+              context,
+              l10n.pingLatency,
+              '${_currentStatus!['latency']} ms',
+              valueColor: _currentStatus!['latency'] < 100
+                  ? Colors.green
+                  : (_currentStatus!['latency'] < 200
+                        ? Colors.orange
+                        : Colors.red),
+            ),
+          ],
           if (_errorMessage != null) ...[
             const SizedBox(height: 8),
             Text(

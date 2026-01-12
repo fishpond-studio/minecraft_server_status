@@ -1,8 +1,8 @@
 ﻿import 'package:flutter/material.dart';
-import 'package:is_mc_fk_running/l10n/app_localizations.dart';
-import 'package:is_mc_fk_running/pages/sponsor_page.dart';
-import 'package:is_mc_fk_running/services/test_data_generator.dart';
-import 'package:is_mc_fk_running/data/database.dart';
+import 'package:mc_sentinel/l10n/app_localizations.dart';
+import 'package:mc_sentinel/pages/sponsor_page.dart';
+import 'package:mc_sentinel/services/test_data_generator.dart';
+import 'package:mc_sentinel/data/database.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import 'dart:ui';

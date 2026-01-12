@@ -1,5 +1,5 @@
-name: is_mc_fk_running
-description: "A new Flutter project."
+name: mc_sentinel
+description: "MC Sentinel - Minecraft 服务器状态监控应用"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev

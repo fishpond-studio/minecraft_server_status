@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:is_mc_fk_running/l10n/app_localizations.dart';
+import 'package:mc_sentinel/l10n/app_localizations.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:is_mc_fk_running/data/database.dart';
-import 'package:is_mc_fk_running/services/data_collector.dart';
+import 'package:mc_sentinel/data/database.dart';
+import 'package:mc_sentinel/services/data_collector.dart';
 import 'dart:ui';
 
 import '../widget/server_card.dart';

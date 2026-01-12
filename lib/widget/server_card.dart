@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:is_mc_fk_running/widget/server_info.dart';
-import 'package:is_mc_fk_running/pages/server_detail_page.dart';
+import 'package:mc_sentinel/widget/server_info.dart';
+import 'package:mc_sentinel/pages/server_detail_page.dart';
 import 'dart:ui';
 
 class ServerCard extends StatefulWidget {

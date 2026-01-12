@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:is_mc_fk_running/l10n/app_localizations.dart';
+import 'package:mc_sentinel/l10n/app_localizations.dart';
 
 Future<Map<String, dynamic>?> showAddServerDialog(
   BuildContext context, {
